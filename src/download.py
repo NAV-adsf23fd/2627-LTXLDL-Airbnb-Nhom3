@@ -1,6 +1,4 @@
-import csv
 import urllib.request
-import datetime
 
 BASE_URL = "https://data.insideairbnb.com/"
 LISTINGS = "data/listings.csv.gz"

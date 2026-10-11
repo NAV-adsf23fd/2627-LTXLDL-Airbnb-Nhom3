@@ -1,9 +1,9 @@
 import argparse
-import src.download as dl
 import sys
 
 import yaml
 
+import src.download as dl
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-c", "--config", help="Add config", type=str)
@@ -26,13 +26,11 @@ if args.skip_llm:
 
 if args.config != None:
     try:
-        f = open(configPath, "r")
+        with open(configPath, "r") as f:
+            data = yaml.load(f, Loader=yaml.SafeLoader)
     except OSError:
         print("Could not read file: ", configPath)
         sys.exit()
-
-    with f:
-        data = yaml.load(f, Loader=yaml.SafeLoader)
 
     if not args.skip_download:
         dl.Download(data, args.verbose)

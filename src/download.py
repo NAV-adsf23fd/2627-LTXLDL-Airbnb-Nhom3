@@ -26,19 +26,19 @@ def Download(data, verbose):
                 "\n",
             )
 
-        # urllib.request.urlretrieve(
-        #     BASE_URL + data_root + t + "/" + LISTINGS,
-        #     "data/raw/" + t + "_" + "listings.csv.gz",
-        # )
-        # urllib.request.urlretrieve(
-        #     BASE_URL + data_root + t + "/" + CALENDAR,
-        #     "data/raw/" + t + "_" + "calendar.csv.gz",
-        # )
-        # urllib.request.urlretrieve(
-        #     BASE_URL + data_root + t + "/" + REVIEWS,
-        #     "data/raw/" + t + "_" + "reviews.csv.gz",
-        # )
-        # urllib.request.urlretrieve(
-        #     BASE_URL + data_root + t + "/" + NEIGHBOURHOODS,
-        #     "data/raw/" + t + "_" + "neighbourhoods.csv.gz",
-        # )
+        urllib.request.urlretrieve(
+            BASE_URL + data_root + t + "/" + LISTINGS,
+            "data/raw/" + t + "_" + "listings.csv.gz",
+        )
+        urllib.request.urlretrieve(
+            BASE_URL + data_root + t + "/" + CALENDAR,
+            "data/raw/" + t + "_" + "calendar.csv.gz",
+        )
+        urllib.request.urlretrieve(
+            BASE_URL + data_root + t + "/" + REVIEWS,
+            "data/raw/" + t + "_" + "reviews.csv.gz",
+        )
+        urllib.request.urlretrieve(
+            BASE_URL + data_root + t + "/" + NEIGHBOURHOODS,
+            "data/raw/" + t + "_" + "neighbourhoods.csv.gz",
+        )

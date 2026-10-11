@@ -1,9 +1,11 @@
 import argparse
 import src.download as dl
 import sys
+import os
 
 import yaml
 
+os.makedirs("data/raw", exist_ok=True)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-c", "--config", help="Add config", type=str)
@@ -26,7 +28,7 @@ if args.skip_llm:
 
 if args.config != None:
     try:
-        f = open(configPath, "r")
+        f = open(configPath, "r",encoding="utf-8")
     except OSError:
         print("Could not read file: ", configPath)
         sys.exit()

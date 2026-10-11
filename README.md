@@ -23,3 +23,8 @@ Bỏ qua bước chạy LLM
 ```
 -l, --skip-llm
 ```
+
+In log chi tiết
+```
+-v, --verbose
+```

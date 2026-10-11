@@ -1,0 +1,20 @@
+city: paris
+data_root: france/ile-de-france/paris/   # dựng URL: data.insideairbnb.com/<data_root>/<mốc>/...
+currency: CLP
+snapshots: [2025-09-12, 2025-12-13, 2026-03-21 ,2026-06-16]
+
+qa:
+  price_max_clp: 5000000          # ngưỡng ngoại lai giá
+  min_nights_cap: 365
+  dedupe_keys: [id, last_scraped]
+
+kpi:
+  area_col: neighbourhood_cleansed
+
+llm:
+  provider: gemini                # model tuỳ chọn
+  sample_size: 3000               # nhóm giải thích cỡ mẫu
+  aspects: [vị trí, sạch sẽ, chủ nhà, giá trị, tiện nghi, độ ồn, an toàn]
+  cache: data/processed/llm_cache.jsonl
+
+seed: 42

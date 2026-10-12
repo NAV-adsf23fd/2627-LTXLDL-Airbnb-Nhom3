@@ -29,7 +29,7 @@ if args.skip_llm:
 
 if args.config != None:
     try:
-        f = open(configPath, "r",encoding="utf-8")
+        f = open(configPath, "r", encoding="utf-8")
     except OSError:
         print("Could not read file: ", configPath)
         sys.exit()

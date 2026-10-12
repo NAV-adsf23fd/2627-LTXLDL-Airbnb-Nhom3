@@ -1,3 +1,4 @@
+import os
 import urllib.request
 
 BASE_URL = "https://data.insideairbnb.com/"
@@ -10,6 +11,7 @@ NEIGHBOURHOODS = "visualisations/neighbourhoods.geojson"
 def Download(data, verbose):
     data_root = data["data_root"]
     snapshots = [t.strftime("%Y-%m-%d") for t in data["snapshots"]]
+    os.makedirs("data/raw", exist_ok=True)
     for t in snapshots:
         if verbose:
             print(

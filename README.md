@@ -1,4 +1,4 @@
-# Nhóm 3 - Lập trình xử lý dữ liệu
+# Nhóm 3 - Lập trình xử lý dữ liệu - Paris
 
 Python version
 
@@ -27,4 +27,9 @@ Bỏ qua bước chạy LLM
 In log chi tiết
 ```
 -v, --verbose
+```
+
+```
+Bỏ qua bước lọc mẫu 
+-f, --skip-filter
 ```

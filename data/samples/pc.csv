@@ -1,0 +1,85 @@
+Lớp,Nhóm,Thành phố,Quốc gia,Tiền tệ,Mã dữ liệu,Mốc 1,Mốc 2,Mốc 3,Mốc 4,URL gốc Inside Airbnb
+UET.DSE2049 1,1,Amsterdam,The Netherlands,EUR,DSE2049-C01-G01-amsterdam,2025-09-11,2025-12-12,2026-03-19,2026-06-15,https://data.insideairbnb.com/the-netherlands/north-holland/amsterdam/
+UET.DSE2049 1,2,Madrid,Spain,EUR,DSE2049-C01-G02-madrid,2025-09-14,2025-12-14,2026-03-24,2026-06-20,https://data.insideairbnb.com/spain/comunidad-de-madrid/madrid/
+UET.DSE2049 1,3,Lisbon,Portugal,EUR,DSE2049-C01-G03-lisbon,2025-09-21,2025-12-25,2026-03-26,2026-06-23,https://data.insideairbnb.com/portugal/lisbon/lisbon/
+UET.DSE2049 1,4,Bangkok,Thailand,THB,DSE2049-C01-G04-bangkok,2025-09-26,2025-12-28,2026-03-30,2026-06-29,https://data.insideairbnb.com/thailand/central-thailand/bangkok/
+UET.DSE2049 1,5,Budapest,Hungary,HUF,DSE2049-C01-G05-budapest,2025-09-25,2025-12-28,2026-03-29,2026-06-28,https://data.insideairbnb.com/hungary/közép-magyarország/budapest/
+UET.DSE2049 1,6,Buenos Aires,Argentina,ARS,DSE2049-C01-G06-buenos-aires,2025-09-27,2025-12-29,2026-03-30,2026-06-29,https://data.insideairbnb.com/argentina/ciudad-autónoma-de-buenos-aires/buenos-aires/
+UET.DSE2049 1,7,Rome,Italy,EUR,DSE2049-C01-G07-rome,2025-09-14,2025-12-16,2026-03-24,2026-06-20,https://data.insideairbnb.com/italy/lazio/rome/
+UET.DSE2049 1,8,Milan,Italy,EUR,DSE2049-C01-G08-milan,2025-09-22,2025-12-26,2026-03-27,2026-06-25,https://data.insideairbnb.com/italy/lombardy/milan/
+UET.DSE2049 1,9,Vienna,Austria,EUR,DSE2049-C01-G09-vienna,2025-09-14,2025-12-16,2026-03-24,2026-06-20,https://data.insideairbnb.com/austria/vienna/vienna/
+UET.DSE2049 1,10,Toronto,Canada,CAD,DSE2049-C01-G10-toronto,2025-09-11,2025-12-12,2026-03-19,2026-06-15,https://data.insideairbnb.com/canada/on/toronto/
+UET.DSE2049 1,11,Austin,United States,USD,DSE2049-C01-G11-austin,2025-09-16,2025-12-22,2026-03-25,2026-06-22,https://data.insideairbnb.com/united-states/tx/austin/
+UET.DSE2049 1,12,San Diego,United States,USD,DSE2049-C01-G12-san-diego,2025-09-25,2025-12-22,2026-03-29,2026-06-27,https://data.insideairbnb.com/united-states/ca/san-diego/
+UET.DSE2049 2,1,Rome,Italy,EUR,DSE2049-C02-G01-rome,2025-09-14,2025-12-16,2026-03-24,2026-06-20,https://data.insideairbnb.com/italy/lazio/rome/
+UET.DSE2049 2,2,Florence,Italy,EUR,DSE2049-C02-G02-florence,2025-09-22,2025-12-26,2026-03-27,2026-06-26,https://data.insideairbnb.com/italy/toscana/florence/
+UET.DSE2049 2,3,Amsterdam,The Netherlands,EUR,DSE2049-C02-G03-amsterdam,2025-09-11,2025-12-12,2026-03-19,2026-06-15,https://data.insideairbnb.com/the-netherlands/north-holland/amsterdam/
+UET.DSE2049 2,4,Mexico City,Mexico,MXN,DSE2049-C02-G04-mexico-city,2025-09-27,2025-12-29,2026-03-30,2026-06-15,https://data.insideairbnb.com/mexico/df/mexico-city/
+UET.DSE2049 2,5,Toronto,Canada,CAD,DSE2049-C02-G05-toronto,2025-09-11,2025-12-12,2026-03-19,2026-06-15,https://data.insideairbnb.com/canada/on/toronto/
+UET.DSE2049 2,6,Sydney,Australia,AUD,DSE2049-C02-G06-sydney,2025-09-12,2025-12-12,2026-03-21,2026-06-16,https://data.insideairbnb.com/australia/nsw/sydney/
+UET.DSE2049 2,7,Tokyo,Japan,JPY,DSE2049-C02-G07-tokyo,2025-09-29,2025-12-29,2026-03-30,2026-06-30,https://data.insideairbnb.com/japan/kantō/tokyo/
+UET.DSE2049 2,8,Barcelona,Spain,EUR,DSE2049-C02-G08-barcelona,2025-09-14,2025-12-14,2026-03-21,2026-06-24,https://data.insideairbnb.com/spain/catalonia/barcelona/
+UET.DSE2049 2,9,Berlin,Germany,EUR,DSE2049-C02-G09-berlin,2025-09-23,2025-12-27,2026-03-28,2026-06-26,https://data.insideairbnb.com/germany/be/berlin/
+UET.DSE2049 2,10,New York City,United States,USD,DSE2049-C02-G10-new-york-city,2025-09-01,2025-12-04,2026-03-16,2026-06-14,https://data.insideairbnb.com/united-states/ny/new-york-city/
+UET.DSE2049 2,11,Paris,France,EUR,DSE2049-C02-G11-paris,2025-09-12,2025-12-13,2026-03-21,2026-06-16,https://data.insideairbnb.com/france/ile-de-france/paris/
+UET.DSE2049 2,12,Austin,United States,USD,DSE2049-C02-G12-austin,2025-09-16,2025-12-22,2026-03-25,2026-06-22,https://data.insideairbnb.com/united-states/tx/austin/
+UET.DSE2049 3,1,Sydney,Australia,AUD,DSE2049-C03-G01-sydney,2025-09-12,2025-12-12,2026-03-21,2026-06-16,https://data.insideairbnb.com/australia/nsw/sydney/
+UET.DSE2049 3,2,Tokyo,Japan,JPY,DSE2049-C03-G02-tokyo,2025-09-29,2025-12-29,2026-03-30,2026-06-30,https://data.insideairbnb.com/japan/kantō/tokyo/
+UET.DSE2049 3,3,Santiago,Chile,CLP,DSE2049-C03-G03-santiago,2025-09-27,2025-12-29,2026-03-30,2026-06-29,https://data.insideairbnb.com/chile/rm/santiago/
+UET.DSE2049 3,4,Madrid,Spain,EUR,DSE2049-C03-G04-madrid,2025-09-14,2025-12-14,2026-03-24,2026-06-20,https://data.insideairbnb.com/spain/comunidad-de-madrid/madrid/
+UET.DSE2049 3,5,Prague,Czech Republic,CZK,DSE2049-C03-G05-prague,2025-09-23,2025-12-27,2026-03-29,2026-06-27,https://data.insideairbnb.com/czech-republic/prague/prague/
+UET.DSE2049 3,6,Porto,Portugal,EUR,DSE2049-C03-G06-porto,2025-09-21,2025-12-25,2026-03-26,2026-06-23,https://data.insideairbnb.com/portugal/norte/porto/
+UET.DSE2049 3,7,Paris,France,EUR,DSE2049-C03-G07-paris,2025-09-12,2025-12-13,2026-03-21,2026-06-16,https://data.insideairbnb.com/france/ile-de-france/paris/
+UET.DSE2049 3,8,Buenos Aires,Argentina,ARS,DSE2049-C03-G08-buenos-aires,2025-09-27,2025-12-29,2026-03-30,2026-06-29,https://data.insideairbnb.com/argentina/ciudad-autónoma-de-buenos-aires/buenos-aires/
+UET.DSE2049 3,9,Berlin,Germany,EUR,DSE2049-C03-G09-berlin,2025-09-23,2025-12-27,2026-03-28,2026-06-26,https://data.insideairbnb.com/germany/be/berlin/
+UET.DSE2049 3,10,Milan,Italy,EUR,DSE2049-C03-G10-milan,2025-09-22,2025-12-26,2026-03-27,2026-06-25,https://data.insideairbnb.com/italy/lombardy/milan/
+UET.DSE2049 3,11,San Diego,United States,USD,DSE2049-C03-G11-san-diego,2025-09-25,2025-12-22,2026-03-29,2026-06-27,https://data.insideairbnb.com/united-states/ca/san-diego/
+UET.DSE2049 3,12,Montreal,Canada,CAD,DSE2049-C03-G12-montreal,2025-09-18,2025-12-22,2026-03-16,2026-06-15,https://data.insideairbnb.com/canada/qc/montreal/
+UET.DSE2049 4,1,Bangkok,Thailand,THB,DSE2049-C04-G01-bangkok,2025-09-26,2025-12-28,2026-03-30,2026-06-29,https://data.insideairbnb.com/thailand/central-thailand/bangkok/
+UET.DSE2049 4,2,Melbourne,Australia,AUD,DSE2049-C04-G02-melbourne,2025-09-12,2025-12-12,2026-03-21,2026-06-16,https://data.insideairbnb.com/australia/vic/melbourne/
+UET.DSE2049 4,3,Paris,France,EUR,DSE2049-C04-G03-paris,2025-09-12,2025-12-13,2026-03-21,2026-06-16,https://data.insideairbnb.com/france/ile-de-france/paris/
+UET.DSE2049 4,4,Cape Town,South Africa,ZAR,DSE2049-C04-G04-cape-town,2025-09-28,2025-12-29,2026-03-30,2026-06-29,https://data.insideairbnb.com/south-africa/wc/cape-town/
+UET.DSE2049 4,5,Vienna,Austria,EUR,DSE2049-C04-G05-vienna,2025-09-14,2025-12-16,2026-03-24,2026-06-20,https://data.insideairbnb.com/austria/vienna/vienna/
+UET.DSE2049 4,6,Porto,Portugal,EUR,DSE2049-C04-G06-porto,2025-09-21,2025-12-25,2026-03-26,2026-06-23,https://data.insideairbnb.com/portugal/norte/porto/
+UET.DSE2049 4,7,Toronto,Canada,CAD,DSE2049-C04-G07-toronto,2025-09-11,2025-12-12,2026-03-19,2026-06-15,https://data.insideairbnb.com/canada/on/toronto/
+UET.DSE2049 4,8,New York City,United States,USD,DSE2049-C04-G08-new-york-city,2025-09-01,2025-12-04,2026-03-16,2026-06-14,https://data.insideairbnb.com/united-states/ny/new-york-city/
+UET.DSE2049 4,9,Santiago,Chile,CLP,DSE2049-C04-G09-santiago,2025-09-27,2025-12-29,2026-03-30,2026-06-29,https://data.insideairbnb.com/chile/rm/santiago/
+UET.DSE2049 4,10,Florence,Italy,EUR,DSE2049-C04-G10-florence,2025-09-22,2025-12-26,2026-03-27,2026-06-26,https://data.insideairbnb.com/italy/toscana/florence/
+UET.DSE2049 4,11,Madrid,Spain,EUR,DSE2049-C04-G11-madrid,2025-09-14,2025-12-14,2026-03-24,2026-06-20,https://data.insideairbnb.com/spain/comunidad-de-madrid/madrid/
+UET.DSE2049 4,12,London,United Kingdom,GBP,DSE2049-C04-G12-london,2025-09-14,2025-12-13,2026-03-21,2026-06-19,https://data.insideairbnb.com/united-kingdom/england/london/
+UET.DSE2049 5,1,Mexico City,Mexico,MXN,DSE2049-C05-G01-mexico-city,2025-09-27,2025-12-29,2026-03-30,2026-06-15,https://data.insideairbnb.com/mexico/df/mexico-city/
+UET.DSE2049 5,2,Santiago,Chile,CLP,DSE2049-C05-G02-santiago,2025-09-27,2025-12-29,2026-03-30,2026-06-29,https://data.insideairbnb.com/chile/rm/santiago/
+UET.DSE2049 5,3,Amsterdam,The Netherlands,EUR,DSE2049-C05-G03-amsterdam,2025-09-11,2025-12-12,2026-03-19,2026-06-15,https://data.insideairbnb.com/the-netherlands/north-holland/amsterdam/
+UET.DSE2049 5,4,Tokyo,Japan,JPY,DSE2049-C05-G04-tokyo,2025-09-29,2025-12-29,2026-03-30,2026-06-30,https://data.insideairbnb.com/japan/kantō/tokyo/
+UET.DSE2049 5,5,London,United Kingdom,GBP,DSE2049-C05-G05-london,2025-09-14,2025-12-13,2026-03-21,2026-06-19,https://data.insideairbnb.com/united-kingdom/england/london/
+UET.DSE2049 5,6,Istanbul,Turkey,TRY,DSE2049-C05-G06-istanbul,2025-09-29,2025-12-30,2026-03-31,2026-06-30,https://data.insideairbnb.com/turkey/marmara/istanbul/
+UET.DSE2049 5,7,Lisbon,Portugal,EUR,DSE2049-C05-G07-lisbon,2025-09-21,2025-12-25,2026-03-26,2026-06-23,https://data.insideairbnb.com/portugal/lisbon/lisbon/
+UET.DSE2049 5,8,Budapest,Hungary,HUF,DSE2049-C05-G08-budapest,2025-09-25,2025-12-28,2026-03-29,2026-06-28,https://data.insideairbnb.com/hungary/közép-magyarország/budapest/
+UET.DSE2049 5,9,Melbourne,Australia,AUD,DSE2049-C05-G09-melbourne,2025-09-12,2025-12-12,2026-03-21,2026-06-16,https://data.insideairbnb.com/australia/vic/melbourne/
+UET.DSE2049 5,10,New York City,United States,USD,DSE2049-C05-G10-new-york-city,2025-09-01,2025-12-04,2026-03-16,2026-06-14,https://data.insideairbnb.com/united-states/ny/new-york-city/
+UET.DSE2049 5,11,Prague,Czech Republic,CZK,DSE2049-C05-G11-prague,2025-09-23,2025-12-27,2026-03-29,2026-06-27,https://data.insideairbnb.com/czech-republic/prague/prague/
+UET.DSE2049 5,12,Milan,Italy,EUR,DSE2049-C05-G12-milan,2025-09-22,2025-12-26,2026-03-27,2026-06-25,https://data.insideairbnb.com/italy/lombardy/milan/
+UET.DSE2049 6,1,Rome,Italy,EUR,DSE2049-C06-G01-rome,2025-09-14,2025-12-16,2026-03-24,2026-06-20,https://data.insideairbnb.com/italy/lazio/rome/
+UET.DSE2049 6,2,Porto,Portugal,EUR,DSE2049-C06-G02-porto,2025-09-21,2025-12-25,2026-03-26,2026-06-23,https://data.insideairbnb.com/portugal/norte/porto/
+UET.DSE2049 6,3,Bangkok,Thailand,THB,DSE2049-C06-G03-bangkok,2025-09-26,2025-12-28,2026-03-30,2026-06-29,https://data.insideairbnb.com/thailand/central-thailand/bangkok/
+UET.DSE2049 6,4,Melbourne,Australia,AUD,DSE2049-C06-G04-melbourne,2025-09-12,2025-12-12,2026-03-21,2026-06-16,https://data.insideairbnb.com/australia/vic/melbourne/
+UET.DSE2049 6,5,Istanbul,Turkey,TRY,DSE2049-C06-G05-istanbul,2025-09-29,2025-12-30,2026-03-31,2026-06-30,https://data.insideairbnb.com/turkey/marmara/istanbul/
+UET.DSE2049 6,6,Cape Town,South Africa,ZAR,DSE2049-C06-G06-cape-town,2025-09-28,2025-12-29,2026-03-30,2026-06-29,https://data.insideairbnb.com/south-africa/wc/cape-town/
+UET.DSE2049 6,7,Montreal,Canada,CAD,DSE2049-C06-G07-montreal,2025-09-18,2025-12-22,2026-03-16,2026-06-15,https://data.insideairbnb.com/canada/qc/montreal/
+UET.DSE2049 6,8,Mexico City,Mexico,MXN,DSE2049-C06-G08-mexico-city,2025-09-27,2025-12-29,2026-03-30,2026-06-15,https://data.insideairbnb.com/mexico/df/mexico-city/
+UET.DSE2049 6,9,San Diego,United States,USD,DSE2049-C06-G09-san-diego,2025-09-25,2025-12-22,2026-03-29,2026-06-27,https://data.insideairbnb.com/united-states/ca/san-diego/
+UET.DSE2049 6,10,Budapest,Hungary,HUF,DSE2049-C06-G10-budapest,2025-09-25,2025-12-28,2026-03-29,2026-06-28,https://data.insideairbnb.com/hungary/közép-magyarország/budapest/
+UET.DSE2049 6,11,Berlin,Germany,EUR,DSE2049-C06-G11-berlin,2025-09-23,2025-12-27,2026-03-28,2026-06-26,https://data.insideairbnb.com/germany/be/berlin/
+UET.DSE2049 6,12,Barcelona,Spain,EUR,DSE2049-C06-G12-barcelona,2025-09-14,2025-12-14,2026-03-21,2026-06-24,https://data.insideairbnb.com/spain/catalonia/barcelona/
+UET.DSE2049 7,2,Cape Town,South Africa,ZAR,DSE2049-C07-G02-cape-town,2025-09-28,2025-12-29,2026-03-30,2026-06-29,https://data.insideairbnb.com/south-africa/wc/cape-town/
+UET.DSE2049 7,4,Vienna,Austria,EUR,DSE2049-C07-G04-vienna,2025-09-14,2025-12-16,2026-03-24,2026-06-20,https://data.insideairbnb.com/austria/vienna/vienna/
+UET.DSE2049 7,7,Montreal,Canada,CAD,DSE2049-C07-G07-montreal,2025-09-18,2025-12-22,2026-03-16,2026-06-15,https://data.insideairbnb.com/canada/qc/montreal/
+UET.DSE2049 7,8,Istanbul,Turkey,TRY,DSE2049-C07-G08-istanbul,2025-09-29,2025-12-30,2026-03-31,2026-06-30,https://data.insideairbnb.com/turkey/marmara/istanbul/
+UET.DSE2049 7,9,Sydney,Australia,AUD,DSE2049-C07-G09-sydney,2025-09-12,2025-12-12,2026-03-21,2026-06-16,https://data.insideairbnb.com/australia/nsw/sydney/
+UET.DSE2049 7,10,Florence,Italy,EUR,DSE2049-C07-G10-florence,2025-09-22,2025-12-26,2026-03-27,2026-06-26,https://data.insideairbnb.com/italy/toscana/florence/
+UET.DSE2049 7,11,Barcelona,Spain,EUR,DSE2049-C07-G11-barcelona,2025-09-14,2025-12-14,2026-03-21,2026-06-24,https://data.insideairbnb.com/spain/catalonia/barcelona/
+UET.DSE2049 7,12,Austin,United States,USD,DSE2049-C07-G12-austin,2025-09-16,2025-12-22,2026-03-25,2026-06-22,https://data.insideairbnb.com/united-states/tx/austin/
+UET.DSE2049 7,13,Lisbon,Portugal,EUR,DSE2049-C07-G13-lisbon,2025-09-21,2025-12-25,2026-03-26,2026-06-23,https://data.insideairbnb.com/portugal/lisbon/lisbon/
+UET.DSE2049 7,14,Prague,Czech Republic,CZK,DSE2049-C07-G14-prague,2025-09-23,2025-12-27,2026-03-29,2026-06-27,https://data.insideairbnb.com/czech-republic/prague/prague/
+UET.DSE2049 7,15,London,United Kingdom,GBP,DSE2049-C07-G15-london,2025-09-14,2025-12-13,2026-03-21,2026-06-19,https://data.insideairbnb.com/united-kingdom/england/london/
+UET.DSE2049 7,16,Buenos Aires,Argentina,ARS,DSE2049-C07-G16-buenos-aires,2025-09-27,2025-12-29,2026-03-30,2026-06-29,https://data.insideairbnb.com/argentina/ciudad-autónoma-de-buenos-aires/buenos-aires/

@@ -1,7 +1,9 @@
-city: paris
-data_root: france/ile-de-france/paris/   # dựng URL: data.insideairbnb.com/<data_root>/<mốc>/...
+city: Paris
+data_root: france/ile-de-france/paris/  
 currency: CLP
 snapshots: [2025-09-12, 2025-12-13, 2026-03-21 ,2026-06-16]
+nhom: 3
+lop: UET.DSE2049 4
 
 qa:
   price_max_clp: 5000000          # ngưỡng ngoại lai giá
@@ -18,3 +20,4 @@ llm:
   cache: data/processed/llm_cache.jsonl
 
 seed: 42
+

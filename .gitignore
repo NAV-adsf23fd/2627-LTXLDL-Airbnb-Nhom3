@@ -3,3 +3,4 @@ data/raw/
 .venv/
 pyuet.sh
 src/__pycache__
+notebooks/local

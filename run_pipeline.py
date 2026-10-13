@@ -14,6 +14,9 @@ parser.add_argument("-l", "--skip-llm", help="Skip LLM", action="store_true")
 parser.add_argument(
     "-v", "--verbose", help="Increase output verbosity", action="store_true"
 )
+parser.add_argument(
+    "-f", "--skip-filter", help="Skip filtering samples", action="store_true"
+)
 
 args = parser.parse_args()
 
@@ -26,11 +29,14 @@ if args.skip_llm:
 
 if args.config != None:
     try:
-        with open(configPath, "r") as f:
-            data = yaml.load(f, Loader=yaml.SafeLoader)
+        with open(configPath, "r", encoding="utf-8") as f:
+            config = yaml.load(f, Loader=yaml.SafeLoader)
     except OSError:
         print("Could not read file: ", configPath)
         sys.exit()
 
     if not args.skip_download:
-        dl.Download(data, args.verbose)
+        dl.Download(config, args.verbose)
+
+    if not args.skip_filter:
+        dl.FilterSamples(config)

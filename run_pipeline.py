@@ -26,7 +26,7 @@ if args.skip_llm:
 
 if args.config != None:
     try:
-        with open(configPath, "r") as f:
+        with open(configPath, "r", encoding="utf-8") as f:
             data = yaml.load(f, Loader=yaml.SafeLoader)
     except OSError:
         print("Could not read file: ", configPath)

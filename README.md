@@ -29,7 +29,7 @@ In log chi tiết
 -v, --verbose
 ```
 
-```
 Bỏ qua bước lọc mẫu 
+```
 -f, --skip-filter
 ```

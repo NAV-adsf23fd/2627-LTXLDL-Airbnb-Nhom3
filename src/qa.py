@@ -21,7 +21,7 @@ df["snapshots"]
 
 #listings
 for i in df["snapshots"]:
-    tmp = "data/raw/"+ i.strftime("%Y-%m-%d") + "_listings.csv.gz"
+    tmp = "data/raw/"+ i.strftime("%Y-%m-%d") + "/" + i.strftime("%Y-%m-%d") + "_listings.csv.gz"
     listings = pd.read_csv(tmp)
     abc=listings.merge(process,left_on="id",right_on="listing_id",how="right")
     ab = abc.merge(areas,on="analysis_area",how="left")
@@ -42,19 +42,18 @@ for i in df["snapshots"]:
 
 #calendar
 for i in df["snapshots"]:
-    tmp = "data/raw/"+ i.strftime("%Y-%m-%d") + "_calendar.csv.gz"
+    tmp = "data/raw/"+ i.strftime("%Y-%m-%d") + "/" + i.strftime("%Y-%m-%d") + "_calendar.csv.gz"
     calendar = pd.read_csv(tmp)
     abc = calendar.merge(process,on="listing_id",how="right")
     ab = abc.drop(columns=["Lớp","Nhóm","Mã dữ liệu","analysis_area","Unnamed: 0"])#xử lý cột dư ở một mốc ở dòng này
     ab["date"] = pd.to_datetime(ab["date"],format="%Y-%m-%d")
     ab["available"] = ab["available"].map({"t":True, "f":False})
-    print(ab.info())
 
 
 
 #reviews
 for i in df["snapshots"]:
-    tmp = "data/raw/" + i.strftime("%Y-%m-%d") + "_reviews.csv.gz"
+    tmp = "data/raw/"+ i.strftime("%Y-%m-%d") + "/" + i.strftime("%Y-%m-%d") + "_reviews.csv.gz"
     reviews = pd.read_csv(tmp)
     abc = reviews.merge(revs,left_on="id",right_on="review_id",how="right")
     ab = abc.drop(columns=["Lớp","Nhóm","Mã dữ liệu","Mẫu LLM","Nhãn tay","listing_id_y","Unnamed: 0","review_id"])
@@ -63,7 +62,7 @@ for i in df["snapshots"]:
 
 
 for i in df["snapshots"]:
-    tmp = "data/raw/" + i.strftime("%Y-%m-%d") + "_reviews.csv.gz"
+    tmp = "data/raw/"+ i.strftime("%Y-%m-%d") + "/" + i.strftime("%Y-%m-%d") + "_reviews.csv.gz"
     reviews = pd.read_csv(tmp)
     abc = reviews.merge(revs,left_on="id",right_on="review_id",how="right")
     abc = abc.rename(columns={"listing_id_x":"listing_id"})
@@ -75,7 +74,7 @@ for i in df["snapshots"]:
 
 
 for i in df["snapshots"]:
-    tmp = "data/raw/" + i.strftime("%Y-%m-%d") + "_reviews.csv.gz"
+    tmp = "data/raw/"+ i.strftime("%Y-%m-%d") + "/" + i.strftime("%Y-%m-%d") + "_reviews.csv.gz"
     reviews = pd.read_csv(tmp)
     abc = reviews.merge(revs,left_on="id",right_on="review_id",how="right")
     abc = abc.rename(columns={"listing_id_x":"listing_id"})

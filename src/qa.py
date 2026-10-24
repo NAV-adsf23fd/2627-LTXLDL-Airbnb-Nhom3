@@ -36,19 +36,7 @@ for i in df["snapshots"]:
     ab["first_review"] = pd.to_datetime(ab["first_review"])
     ab["last_review"] = pd.to_datetime(ab["last_review"])
     ab["host_is_superhost"] = ab["host_is_superhost"].map({"t":True,"f":False})
-    print((ab["room_type"]=="Entire home/apt").sum())
-    print((ab["room_type"]=="Private room").sum())
-    print((ab["number_of_reviews"]==0).sum())
-    print((ab["price"].isna()).sum())
-    print(ab.loc[ab["analysis_area"]=="A01","id"].nunique())
-    print(ab.loc[ab["analysis_area"]=="A02","id"].nunique())
-    print(ab.loc[ab["analysis_area"]=="A03","id"].nunique())
-    print(ab.loc[ab["analysis_area"]=="A04","id"].nunique())
-    print(ab.loc[ab["analysis_area"]=="A05","id"].nunique())
-    print(ab.loc[ab["analysis_area"]=="A06","id"].nunique())
-    print(ab.loc[ab["analysis_area"]=="A07","id"].nunique())
-    print(ab.loc[ab["analysis_area"]=="A08","id"].nunique())
-    print(ab.info())
+    
 
 
 
@@ -72,7 +60,6 @@ for i in df["snapshots"]:
     ab = abc.drop(columns=["Lớp","Nhóm","Mã dữ liệu","Mẫu LLM","Nhãn tay","listing_id_y","Unnamed: 0","review_id"])
     ab = ab.rename(columns={"listing_id_x":"listing_id"})
     ab["date"] = pd.to_datetime(ab["date"],format="%Y-%m-%d")
-    print(ab.info())
 
 
 for i in df["snapshots"]:
@@ -85,8 +72,6 @@ for i in df["snapshots"]:
         abc["Mẫu LLM"] == "x"
     ]
     ab = abc.drop(columns=["Lớp","Nhóm","Mã dữ liệu","Nhãn tay","Mẫu LLM","listing_id_y","Unnamed: 0","review_id"])
-    #dùng sql truy vấn chắc là nhanh hơn ngắn hơn nhiều:v
-    print(ab.info())
 
 
 for i in df["snapshots"]:
@@ -99,5 +84,3 @@ for i in df["snapshots"]:
         abc["Nhãn tay"] == "x"
     ]
     ab = abc.drop(columns=["Lớp","Nhóm","Mã dữ liệu","Nhãn tay","Mẫu LLM","listing_id_y","Unnamed: 0","review_id"])
-    #dùng sql truy vấn chắc là nhanh hơn ngắn hơn nhiều:v
-    print(ab.info())

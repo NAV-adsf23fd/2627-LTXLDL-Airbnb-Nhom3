@@ -4,3 +4,4 @@ data/raw/
 pyuet.sh
 src/__pycache__
 notebooks/local
+test.ipynb

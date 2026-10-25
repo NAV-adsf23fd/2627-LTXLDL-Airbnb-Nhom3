@@ -5,3 +5,5 @@ pyuet.sh
 src/__pycache__
 notebooks/local
 test.ipynb
+pyrightconfig.json
+configs/lastest_run.json

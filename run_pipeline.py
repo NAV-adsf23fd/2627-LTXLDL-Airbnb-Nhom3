@@ -1,9 +1,10 @@
 import argparse
+import json
 import sys
-
-import yaml
+from types import SimpleNamespace
 
 import src.download as dl
+from src.utility import LoadConfig
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-c", "--config", help="Add config", type=str)
@@ -17,26 +18,34 @@ parser.add_argument(
 parser.add_argument(
     "-f", "--skip-filter", help="Skip filtering samples", action="store_true"
 )
+parser.add_argument(
+    "--save-flags", help="Save this flags for later run", action="store_true"
+)
+
 
 args = parser.parse_args()
 
-configPath = args.config
+if len(sys.argv) == 1:
+    try:
+        with open("configs/lastest_run.json", "r", encoding="utf-8") as f:
+            args = json.load(f, object_hook=lambda d: SimpleNamespace(**d))
+    except OSError:
+        print("Could not read file: ", "configs/lastest_run.json")
+        sys.exit()
 
+
+if args.save_flags:
+    with open("configs/lastest_run.json", "w", encoding="utf-8") as f:
+        json.dump(vars(args), f, indent=4, ensure_ascii=False)
 
 if args.skip_llm:
     print("skiped llm\n")
 
-
 if args.config != None:
-    try:
-        with open(configPath, "r", encoding="utf-8") as f:
-            config = yaml.load(f, Loader=yaml.SafeLoader)
-    except OSError:
-        print("Could not read file: ", configPath)
-        sys.exit()
+    LoadConfig(args.config)
 
     if not args.skip_download:
-        dl.Download(config, args.verbose)
+        dl.Download(args.verbose)
 
     if not args.skip_filter:
-        dl.FilterSamples(config)
+        dl.FilterSamples()

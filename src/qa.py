@@ -3,6 +3,10 @@ import pandas as pd
 from src.utility import *
 
 
+def NormalizeBool(data, true_val):
+    return data == true_val
+
+
 def clean_percent(val):
     if pd.isna(val):
         return val  # Giữ nguyên NaN

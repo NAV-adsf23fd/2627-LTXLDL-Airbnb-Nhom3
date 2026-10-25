@@ -33,7 +33,6 @@ def FilterSamples():
 
 
 def Download(verbose):
-    data_root = CONFIG.data_root
     snapshots = [t.strftime("%Y-%m-%d") for t in CONFIG.snapshots]
     os.makedirs("data/raw", exist_ok=True)
 
@@ -42,29 +41,17 @@ def Download(verbose):
         if verbose:
             print(
                 "Downloading...\n",
-                BASE_URL + data_root + t + "/" + LISTINGS,
+                BASE_URL + CONFIG.data_root + t + "/data/" + LISTINGS,
                 "\n",
-                BASE_URL + data_root + t + "/" + CALENDAR,
+                BASE_URL + CONFIG.data_root + t + "/data/" + CALENDAR,
                 "\n",
-                BASE_URL + data_root + t + "/" + REVIEWS,
+                BASE_URL + CONFIG.data_root + t + "/data/" + REVIEWS,
                 "\n",
-                BASE_URL + data_root + t + "/" + NEIGHBOURHOODS,
+                BASE_URL + CONFIG.data_root + t + "/data/" + NEIGHBOURHOODS,
                 "\n",
             )
 
-        urllib.request.urlretrieve(
-            BASE_URL + data_root + t + "/" + LISTINGS,
-            "data/raw/" + t + "/" + t + "_" + "listings.csv.gz",
-        )
-        urllib.request.urlretrieve(
-            BASE_URL + data_root + t + "/" + CALENDAR,
-            "data/raw/" + t + "/" + t + "_" + "calendar.csv.gz",
-        )
-        urllib.request.urlretrieve(
-            BASE_URL + data_root + t + "/" + REVIEWS,
-            "data/raw/" + t + "/" + t + "_" + "reviews.csv.gz",
-        )
-        urllib.request.urlretrieve(
-            BASE_URL + data_root + t + "/" + NEIGHBOURHOODS,
-            "data/raw/" + t + "/" + t + "_" + "neighbourhoods.geojson",
-        )
+        urllib.request.urlretrieve(*GetDataURL(t, LISTINGS))
+        urllib.request.urlretrieve(*GetDataURL(t, CALENDAR))
+        urllib.request.urlretrieve(*GetDataURL(t, REVIEWS))
+        urllib.request.urlretrieve(*GetDataURL(t, NEIGHBOURHOODS))

@@ -2,7 +2,6 @@ import json
 import os
 from typing import Literal
 
-from google.genai.types import JOB_STATES_ENDED, JOB_STATES_SUCCEEDED
 import pandas as pd
 from dotenv import load_dotenv
 from google import genai
@@ -19,11 +18,7 @@ batch_job_name = None
 client = genai.Client(api_key=KEY)
 review = pd.read_csv("data/test/lmm.csv")
 
-# tra_loi = client.models.generate_content(
-#     model=MODEL,
-#     contents="Trong một câu: đánh giá này khen gì, chê gì? Great location, so noisy.",
-# )
-# print(tra_loi.text)
+
 Aspect = Literal[
     "location",
     "cleanliness",
@@ -31,7 +26,7 @@ Aspect = Literal[
     "value",
     "noise",
     "amenities",
-    "safty",
+    "safety",
     "neighbors",
 ]
 
@@ -48,47 +43,53 @@ class ReviewInfo(BaseModel):
 print(list(ReviewInfo.model_json_schema()["properties"]))
 
 
-PROMPT_TEMPLATE = (
+SYSTEM_INSTRUCTION = (
     "Bạn là công cụ trích xuất thông tin từ đánh giá về chỗ ở.\n"
     "Phân tích đánh giá sau và điền đúng schema. "
     "Chỉ gán khía cạnh THỰC SỰ được nhắc đến;\n"
     'đánh giá không có nội dung thì trả sentiment "mixed" '
-    "và các danh sách rỗng.\n\n"
-    "Review: {text}"
+    "và các danh sách rỗng."
 )
 
 
-def ValidateLLM(json_input):
+def ValidateLLM(json_input, valid_results):
+    id = json_input["key"]
+
+    if "error" in json_input:
+        print(f"Lỗi API tại key {id}: {json_input['error']}")
+        return
+
+    json_string = json_input["response"]["candidates"][0]["content"]["parts"][0]["text"]
     try:
-        ReviewInfo.model_validate_json(json_input)
+        r = ReviewInfo.model_validate_json(json_string)
+        valid_results[id] = r
     except ValidationError as loi:
+        print(f"Lỗi validate tại key {id}:")
         for e in loi.errors():
             print(e["type"], e["loc"])
 
 
-# with open("data/test/llm.csv", "r", encoding="utf-8") as f:
-#     LLM_CSV = json.load(f)
-
-# LLM_CACHE = {} if HAS_KEY else dict(LLM_OUTPUT)
-
-
 def OutputProcessing():
-    pass
+    valid_results = {}
+    with open("data/processed/batch_output.jsonl", "r", encoding="utf-8") as f:
+        for line in f:
+            if line.strip():
+                ValidateLLM(json.loads(line), valid_results)
+
+    dict_results = {k: v.model_dump() for k, v in valid_results.items()}
+    with open("data/processed/llm_cache.json", "w", encoding="utf-8") as f:
+        json.dump(dict_results, f, indent=4, ensure_ascii=False)
 
 
 def RunLLM(reviews):
+    os.makedirs("data/processed", exist_ok=True)
     with open("data/processed/batch_requests.jsonl", "w", encoding="utf-8") as f:
         for index, row in reviews.iterrows():
             request = {
                 "key": str(index),
                 "request": {
-                    "contents": [
-                        {
-                            "parts": [
-                                {"text": PROMPT_TEMPLATE.format(text=row["comments"])}
-                            ]
-                        }
-                    ],
+                    "system_instruction": {"parts": [{"text": SYSTEM_INSTRUCTION}]},
+                    "contents": [{"parts": [{"text": str(row["comments"])}]}],
                     "generation_config": {
                         "response_mime_type": "application/json",
                         "response_schema": ReviewInfo.model_json_schema(),
@@ -108,6 +109,16 @@ def RunLLM(reviews):
     )
     batch_job_name = batch_job.name
     print(f"Created job: {batch_job_name}")
+
+
+def QuickCheckBatch():
+    if batch_job_name is None:
+        print("Invalid batch_job_name")
+        return
+
+    batch_job = client.batches.get(name=batch_job_name)
+    assert batch_job.state is not None, "Invalid batch_job_name.state"
+    print(batch_job.state.name)
 
 
 def GetLLMOutput():

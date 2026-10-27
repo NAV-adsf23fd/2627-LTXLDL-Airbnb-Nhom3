@@ -1,11 +1,12 @@
 import argparse
-import src.llm as llm
-import pandas as pd
 import json
 import sys
 from types import SimpleNamespace
 
+import pandas as pd
+
 import src.download as dl
+from src import llm
 from src.utility import LoadConfig
 
 parser = argparse.ArgumentParser()

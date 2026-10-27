@@ -7,3 +7,4 @@ notebooks/local
 test.ipynb
 pyrightconfig.json
 configs/lastest_run.json
+data/test/

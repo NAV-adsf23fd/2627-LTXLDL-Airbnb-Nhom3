@@ -56,8 +56,8 @@ if args.config != None:
 
 def TestLLM():
     if args.run_llm:
-        rv = pd.read_csv("data/test/llm.csv")
-        llm.RunLLM(rv["reviews"])
+        # rv = pd.read_csv("data/test/lmm.csv")
+        llm.RunLLM()
     elif args.quick_check:
         llm.QuickCheckBatch()
     elif args.get_llm:

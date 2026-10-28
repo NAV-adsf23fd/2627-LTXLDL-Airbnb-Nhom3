@@ -1,10 +1,12 @@
 import json
 import os
+import time
 from typing import Literal
 
 import pandas as pd
 from dotenv import load_dotenv
 from google import genai
+from google.genai import types
 from pydantic import BaseModel, Field, ValidationError
 
 load_dotenv()
@@ -13,7 +15,6 @@ KEY = os.getenv("GEMINI_API_KEY")
 MODEL = "gemini-3.5-flash-lite"
 HAS_KEY = bool(KEY)
 
-batch_job_name = None
 
 client = genai.Client(api_key=KEY)
 review = pd.read_csv("data/test/lmm.csv")
@@ -52,6 +53,14 @@ SYSTEM_INSTRUCTION = (
 )
 
 
+def Test():
+    tra_loi = client.interactions.create(
+        model=MODEL,
+        input="Trong một câu: đánh giá này khen gì, chê gì? Great location, so noisy.",
+    )
+    print(tra_loi.output_text)
+
+
 def ValidateLLM(json_input, valid_results):
     id = json_input["key"]
 
@@ -81,10 +90,10 @@ def OutputProcessing():
         json.dump(dict_results, f, indent=4, ensure_ascii=False)
 
 
-def RunLLM(reviews):
+def MakeLLMRequest(reviews):
     os.makedirs("data/processed", exist_ok=True)
     with open("data/processed/batch_requests.jsonl", "w", encoding="utf-8") as f:
-        for index, row in reviews.iterrows():
+        for index, row in reviews.to_frame().iterrows():
             request = {
                 "key": str(index),
                 "request": {
@@ -98,20 +107,50 @@ def RunLLM(reviews):
             }
             f.write(json.dumps(request) + "\n")
 
-    batch_file = client.files.upload(file="data/processed/batch_requests.jsonl")
-    assert batch_file.name is not None, "Upload batch_requests.jsonl that bai"
 
-    global batch_job_name
+def RunLLM():
+    batch_file = client.files.upload(
+        file="data/processed/batch_requests.jsonl",
+        config=types.UploadFileConfig(
+            display_name="my-batch-requests", mime_type="jsonl"
+        ),
+    )
+    assert batch_file.name is not None, "Upload batch_requests.jsonl that bai"
+    assert batch_file.state is not None, "batch_file.state is None"
+    assert batch_file.state.name is not None, "batch_file.state.name is None"
+    print("Uploaded file succeesfully")
+
+    while batch_file.state.name == "PROCESSING":
+        assert batch_file.name is not None, "Upload batch_requests.jsonl that bai"
+
+        time.sleep(2)
+        batch_file = client.files.get(name=batch_file.name)
+        assert batch_file.state is not None, "batch_file.state is None"
+
+    assert (batch_file.state.name == "FAILED") is not True, (
+        "Failed to upload batch_file"
+    )
+
+    print("Processed file succeesfully")
+
+    assert batch_file.name is not None, "batch_file is None"
     batch_job = client.batches.create(
         model=MODEL,
         src=batch_file.name,
         config={"display_name": "ltxldx-paris-review"},
     )
+    print("Created batch job succeesfully")
     batch_job_name = batch_job.name
+    assert batch_job_name is not None, "batch_job_name is None"
+    with open("configs/batch_job_name.txt", "w", encoding="utf-8") as f:
+        f.write(batch_job_name)
     print(f"Created job: {batch_job_name}")
 
 
 def QuickCheckBatch():
+    with open("configs/batch_job_name", "r", encoding="utf-8") as f:
+        batch_job_name = f.read()
+
     if batch_job_name is None:
         print("Invalid batch_job_name")
         return
@@ -122,6 +161,8 @@ def QuickCheckBatch():
 
 
 def GetLLMOutput():
+    with open("configs/batch_job_name", "r", encoding="utf-8") as f:
+        batch_job_name = f.read()
     if batch_job_name is None:
         return
 

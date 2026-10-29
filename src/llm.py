@@ -41,7 +41,7 @@ class ReviewInfo(BaseModel):
     )
 
 
-SYSTEM_INSTRUCTION = (
+PROMPT_TEMPLATE = (
     "Bạn là công cụ trích xuất thông tin từ đánh giá về chỗ ở.\n"
     "Phân tích đánh giá sau và điền đúng schema. "
     "Chỉ gán khía cạnh THỰC SỰ được nhắc đến;\n"

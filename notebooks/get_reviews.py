@@ -29,22 +29,25 @@ reviews = pd.concat(review_list, axis=0, ignore_index=False).set_index("review_i
 reviews.to_csv("data/processed/reviews.csv")
 
 #%%
-def GetComment(verbose):
-    reviews = pd.read_csv("data/processed/reviews.csv")
-    if verbose:
-        print(reviews[reviews["comments"].isna()], "\n")
-        print((reviews.isna()).sum(), "\n")
-        print(len(reviews.dropna()), "\n")
+verbose = False
+reviews = pd.read_csv("data/processed/reviews.csv")
+if verbose:
+    print(reviews[reviews["comments"].isna()], "\n")
+    print((reviews.isna()).sum(), "\n")
+    print(len(reviews.dropna()), "\n")
 
-    reviews = reviews.dropna()
-    reviews["comments"] = reviews["comments"].str.replace(r"\r?<br>", "", regex=True)
-    if verbose:
-        print(reviews.head())
+reviews = reviews.dropna()
+reviews["comments"] = reviews["comments"].str.replace(r"\r?<br>", "", regex=True)
+if verbose:
+    print(reviews.head())
 
-    reviews.to_csv("data/processed/reviews.csv")
+reviews[["review_id", "comments"]].set_index("review_id").to_csv("data/processed/reviews.csv")
+#print(reviews[["review_id", "comments"]])
+#print(reviews.info())
 
 #%%
-GetComment(False)
+
+
     
 
     

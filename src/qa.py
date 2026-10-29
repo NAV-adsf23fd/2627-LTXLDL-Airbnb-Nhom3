@@ -1,4 +1,5 @@
 import pandas as pd
+import html
 
 
 def ExportFile(file, name, time):
@@ -117,10 +118,59 @@ def QAReview(time):
 
     # TODO: chỉ được viết vào đây
     # ->
+    comments_raw = reviews["comments"].fillna("").astype(str).map(html.unescape)
+
+    tag_regex = r"<[a-zA-Z/][^>]*>"
+    br_regex = r"(?i)<br\s*/?>"
+
+    reviews["flag_html_in_comments"] = comments_raw.str.contains(
+        tag_regex, regex=True
+    )
+    reviews["comment_clean"] = (
+        comments_raw.str.replace(br_regex, " ", regex=True)
+        .str.replace(tag_regex, "", regex=True)
+        .str.replace(r"\s+", " ", regex=True)
+        .str.strip()
+    )
+    reviews["flag_empty_comments"] = reviews["comment_clean"].eq("")
+
+    # ── 2. Kiểm tra thiếu khóa & Trùng lặp ID ──────────────────────────
+    def is_blank(s):
+        return s.isna() | s.astype(str).str.strip().eq("")
+
+    reviews["flag_missing_ids"] = (
+        is_blank(reviews["id"])
+        | is_blank(reviews["listing_id"])
+        | is_blank(reviews["reviewer_id"])
+    )
+    id_valid = ~is_blank(reviews["id"])
+    reviews["flag_duplicate_id"] = (
+        reviews["id"].duplicated(keep=False) & id_valid
+    )
+
+    # ── 3. Kiểm tra định dạng ngày hợp lệ ──────────────────────────────
+    if "date" in reviews.columns:
+        reviews["flag_invalid_date"] = pd.to_datetime(
+            reviews["date"], format="%Y-%m-%d", errors="coerce"
+        ).isna()
+    else:
+        reviews["flag_invalid_date"] = True
+
+    
+
+
+    # ── 4. Tạo cờ tổng hợp lỗi (flag_any) ───────────────────────────────
+    error_flags = [
+        "flag_empty_comments",
+        "flag_missing_ids",
+        "flag_duplicate_id",
+        "flag_invalid_date",
+    ]
+    reviews["flag_any"] = reviews[error_flags].any(axis=1)
 
     # END_TOO:
 
-    export = ...  # Điền vào đây tên dữ liệu cần lưu
+    export = reviews  # Điền vào đây tên dữ liệu cần lưu
 
     ExportFile(export, "reviews", time)
 

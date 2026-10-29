@@ -1,6 +1,6 @@
 city: Paris
 data_root: france/ile-de-france/paris/  
-currency: CLP
+currency: EUR
 snapshots: [2026-09-16, 2025-12-13, 2026-03-21 ,2026-06-16]
 nhom: 3
 lop: UET.DSE2049 4

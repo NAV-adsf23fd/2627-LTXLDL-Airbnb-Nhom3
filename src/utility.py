@@ -1,6 +1,8 @@
 import sys
 from typing import Any
 
+import pandas as pd
+from pandas.errors import AttributeConflictWarning
 import yaml
 
 BASE_URL = "https://data.insideairbnb.com/"
@@ -51,3 +53,22 @@ def LoadConfig(path="configs/paris.yaml"):
     except OSError:
         print("Could not read file: ", path)
         sys.exit()
+
+
+def GetComment():
+    merged_review = None
+    review_list = []
+    # test = pd.read_csv("data/raw/2025-12-13/2025-12-13_" + REVIEWS).set_index("id")
+    # print(test["comments"].head())
+    team_rv = pd.read_csv(TEAM_REVIEW)
+
+    for t in CONFIG.snapshots:
+        time = t.strftime("%Y-%m-%d")
+        path = "data/raw/" + time + "/" + time + "_" + REVIEWS
+        review = pd.read_csv(path).set_index("id")
+        review_list.append(review["comments"])
+        merged_review = pd.concat(review_list, axis=0, ignore_index=False)
+
+    assert merged_review is not None, "merged_review is empty"
+    merged_review.to_csv("data/processed/reviews.csv")
+    print(merged_review.iloc[[0, 5001, 10001, 15001]])

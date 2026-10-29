@@ -3,11 +3,9 @@ import json
 import sys
 from types import SimpleNamespace
 
-import pandas as pd
-
 import src.download as dl
 from src import llm
-from src.utility import LoadConfig
+from src.utility import GetComment, LoadConfig
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-c", "--config", help="Add config", type=str)
@@ -27,6 +25,7 @@ parser.add_argument(
 parser.add_argument("--run-llm", action="store_true")
 parser.add_argument("--quick-check", action="store_true")
 parser.add_argument("--get-llm", action="store_true")
+parser.add_argument("--get-rv", action="store_true")
 
 args = parser.parse_args()
 
@@ -66,4 +65,9 @@ def TestLLM():
 
 
 if not args.skip_llm:
-    TestLLM()
+    # TestLLM()
+    pass
+
+if args.get_rv:
+    LoadConfig()
+    GetComment()

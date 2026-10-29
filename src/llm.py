@@ -41,9 +41,6 @@ class ReviewInfo(BaseModel):
     )
 
 
-print(list(ReviewInfo.model_json_schema()["properties"]))
-
-
 SYSTEM_INSTRUCTION = (
     "Bạn là công cụ trích xuất thông tin từ đánh giá về chỗ ở.\n"
     "Phân tích đánh giá sau và điền đúng schema. "

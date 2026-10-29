@@ -1,5 +1,7 @@
 import pandas as pd
 
+from src.utility import CONFIG
+
 
 def ExportFile(file, name, time):
     file.to_csv(f"data/processed/{time}/{time}_flagged_{name}.csv")
@@ -19,9 +21,7 @@ def QAListings(time):
     # InsideAirbnb lưu dạng "$1,234.00" – chuyển về float
     if "price" in listings.columns:
         listings["price"] = (
-            listings["price"]
-            .astype(str)
-            .str.replace(r"[$,\s]", "", regex=True)
+            listings["price"].astype(str).str.replace(r"[$,\s]", "", regex=True)
         )
         listings["price"] = pd.to_numeric(listings["price"], errors="coerce")
 
@@ -48,9 +48,9 @@ def QAListings(time):
 
     # 4a. Giá âm, bằng 0 hoặc thiếu(NaN) (flag_price_invalid)
     if "price" in listings.columns:
-        listings["flag_price_invalid"] = (
-            listings["price"].isna() | listings["price"].le(0)
-        )
+        listings["flag_price_invalid"] = listings["price"].isna() | listings[
+            "price"
+        ].le(0)
         # 4b. Giá vượt ngưỡng ngoại lai (config: price_max_eur) (flag_price_outlier)
         price_max = qa_cfg.get("price_max_eur")
         if price_max is not None:
@@ -107,7 +107,7 @@ def QAListings(time):
     flag_cols = [c for c in listings.columns if c.startswith("flag_")]
     listings["flag_any"] = listings[flag_cols].any(axis=1)
 
-    #Xuất file kết quả
+    # Xuất file kết quả
     export = listings
     ExportFile(export, "listings", time)
 

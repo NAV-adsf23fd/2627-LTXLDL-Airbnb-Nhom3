@@ -7,67 +7,68 @@ from src.utility import *
 LoadConfig()
 
 team_listings = pd.read_csv(TEAM_LISTINGS, usecols=["listing_id", "analysis_area"])
-areas = pd.read_csv(TEAM_VUNG, index_col=0)
-revs = pd.read_csv(
+team_areas = pd.read_csv(TEAM_VUNG, index_col=0)
+team_reviews = pd.read_csv(
     TEAM_REVIEW, usecols=["review_id", "Mẫu LLM", "Nhãn tay"], encoding="utf-8"
 )
 
-for i in CONFIG.snapshots:
-    os.makedirs("data/filtered" + "/" + i.strftime("%Y-%m-%d"), exist_ok=True)
-    tmp_listing = (
-        "data/raw/"
-        + i.strftime("%Y-%m-%d")
-        + "/"
-        + i.strftime("%Y-%m-%d")
-        + "_listings.csv.gz"
+
+def FilterListings(time):
+    listings_path = "data/raw/" + time + "/" + time + "_listings.csv.gz"
+    listings = pd.read_csv(listings_path)
+
+    listings = listings.merge(
+        team_listings, left_on="id", right_on="listing_id", how="right"
     )
-    listings = pd.read_csv(tmp_listing)
-    a = listings.merge(team_listings, left_on="id", right_on="listing_id", how="right")
-    aa = a.merge(areas, on="analysis_area", how="left")
-    aa = aa.drop(
+    listings = listings.merge(team_areas, on="analysis_area", how="left")
+    listings = listings.drop(
         columns=[
             "listing_id",
             "analysis_area",
         ]
     )
-    aa.to_csv(
-        "data/filtered/" + i.strftime("%Y-%m-%d") + "/" + "filtered_listings.csv",
+    listings.to_csv(
+        "data/filtered/" + time + "/" + time + "_filtered_listings.csv",
         index=False,
         encoding="utf-8",
     )
 
-    tmp_calendar = (
-        "data/raw/"
-        + i.strftime("%Y-%m-%d")
-        + "/"
-        + i.strftime("%Y-%m-%d")
-        + "_calendar.csv.gz"
-    )
-    calendar = pd.read_csv(tmp_calendar)
-    b = calendar.merge(team_listings, on="listing_id", how="right")
-    bb = b.drop(columns=["analysis_area"])
-    bb.to_csv(
-        "data/filtered/" + i.strftime("%Y-%m-%d") + "/" + "filtered_calendar.csv",
+
+def FilterCalendar(time):
+    calendar_path = "data/raw/" + time + "/" + time + "_calendar.csv.gz"
+    calendar = pd.read_csv(calendar_path)
+
+    calendar = calendar.merge(team_listings, on="listing_id", how="right")
+    calendar = calendar.drop(columns=["analysis_area"])
+    calendar.to_csv(
+        "data/filtered/" + time + "/" + time + "_filtered_calendar.csv",
         index=False,
         encoding="utf-8",
     )
 
-    tmp_reviews = (
-        "data/raw/"
-        + i.strftime("%Y-%m-%d")
-        + "/"
-        + i.strftime("%Y-%m-%d")
-        + "_reviews.csv.gz"
+
+def FilterReview(time):
+    review_path = "data/raw/" + time + "/" + time + "_reviews.csv.gz"
+    reviews = pd.read_csv(review_path)
+    reviews = reviews.merge(
+        team_reviews, left_on="id", right_on="review_id", how="right"
     )
-    reviews = pd.read_csv(tmp_reviews)
-    c = reviews.merge(revs, left_on="id", right_on="review_id", how="right")
-    cc = c.drop(
+    reviews = reviews.drop(
         columns=[
             "review_id",
         ]
     )
-    cc.to_csv(
-        "data/filtered/" + i.strftime("%Y-%m-%d") + "/" + "filtered_review.csv",
+    reviews.to_csv(
+        "data/filtered/" + time + "/" + time + "_filtered_review.csv",
         index=False,
         encoding="utf-8",
     )
+
+
+for i in CONFIG.snapshots:
+    time = i.strftime("%Y-%m-%d")
+    os.makedirs("data/filtered" + "/" + time, exist_ok=True)
+
+    FilterListings(time)
+    FilterReview(time)
+    FilterCalendar(time)

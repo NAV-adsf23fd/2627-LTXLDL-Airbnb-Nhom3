@@ -1,4 +1,4 @@
-mport os
+import os
 
 import pandas as pd
 
@@ -62,7 +62,7 @@ for i in CONFIG.snapshots:
     )
     aa["instant_bookable"] = aa["instant_bookable"].map({"t": True, "f": False})
     aa["has_availability"] = aa["has_availability"].map({"t": True, "f": False})
-    # TODO
+    # TODO:
     # QA: loại bỏ duplicate theo dedupe_keys từ config
     aa = aa.drop_duplicates(subset=CONFIG.qa["dedupe_keys"], keep="first")
     # QA: cap minimum_nights theo min_nights_cap
@@ -88,7 +88,7 @@ for i in CONFIG.snapshots:
     )
     bb["date"] = pd.to_datetime(bb["date"], format="%Y-%m-%d")
     bb["available"] = bb["available"].map({"t": True, "f": False})
-    # TODO
+    # TODO:
     # QA: loại bỏ duplicate (listing_id + date)
     bb = bb.drop_duplicates(subset=["listing_id", "date"], keep="first")
     bb.to_csv(
@@ -119,7 +119,7 @@ for i in CONFIG.snapshots:
         ],
         errors="ignore",
     )
-    # TODO
+    # TODO:
     # QA: loại bỏ reviews có comments rỗng hoặc null
     cc = cc[cc["comments"].notna() & (cc["comments"].str.strip() != "")]
 
@@ -127,7 +127,7 @@ for i in CONFIG.snapshots:
     d = d[d["Mẫu LLM"] == "x"]
     dd = d.drop(columns=["Mẫu LLM", "Nhãn tay"])
     # kết thúc mỗi vòng for sẽ xuất 1 file csv vào folder processed chính là dữ liệu sạch
-    # TODO
+    # TODO:
     dd.to_csv(
         "data/processed/" + i.strftime("%Y-%m-%d") + "/" + "cleaned_reviews_LLM.csv",
         index=False,
@@ -136,7 +136,7 @@ for i in CONFIG.snapshots:
     e = cc.copy()
     e = e[e["Nhãn tay"] == "x"]
     ee = e.drop(columns=["Mẫu LLM", "Nhãn tay"])
-    # TODO
+    # TODO:
     ee.to_csv(
         "data/processed/"
         + i.strftime("%Y-%m-%d")
@@ -150,4 +150,3 @@ for i in CONFIG.snapshots:
         "data/processed/" + i.strftime("%Y-%m-%d") + "/" + "cleaned_reviews.csv",
         index=False,
     )
-

@@ -4,14 +4,9 @@ import html
 from src.utility import CONFIG
 
 
-def ExportFile(file, name, time):
-    """Lưu DataFrame có cột cờ QA (dùng để audit)."""
-    file.to_csv(f"data/processed/{time}/{time}_flagged_{name}.csv", index=False)
-
-
-def ExportCleaned(file, name, time):
-    """Lưu DataFrame đã làm sạch – đã loại hàng lỗi & bỏ cột cờ (dùng cho KPI)."""
-    out_path = f"data/processed/{time}/{time}_cleaned_{name}.csv"
+def ExportFile(file, name, time, prefix="cleaned"):
+    """Lưu DataFrame ra data/processed/{time}/{time}_{prefix}_{name}.csv."""
+    out_path = f"data/processed/{time}/{time}_{prefix}_{name}.csv"
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     file.to_csv(out_path, index=False)
 
@@ -121,7 +116,7 @@ def QAListings(time):
     cleaned = listings.reset_index(drop=True)
 
     # END_TOO:
-    ExportCleaned(cleaned, "listings", time)
+    ExportFile(cleaned, "listings", time)
 
 
 def QAReview(time):
@@ -180,7 +175,7 @@ def QAReview(time):
 
     export = reviews  # Điền vào đây tên dữ liệu cần lưu
 
-    ExportFile(export, "reviews", time)
+    ExportFile(export, "reviews", time, prefix="flagged")
 
 
 def QACalendar(time):
@@ -360,4 +355,4 @@ def QACalendar(time):
     export = calendar
     os.makedirs(os.path.join("data", "processed", time), exist_ok=True)
 
-    ExportFile(export, "calendar", time)
+    ExportFile(export, "calendar", time, prefix="flagged")

@@ -4,7 +4,6 @@ import sys
 from types import SimpleNamespace
 
 import src.download as dl
-from src import llm
 from src.utility import LoadConfig
 
 parser = argparse.ArgumentParser()
@@ -53,16 +52,16 @@ if args.config != None:
         dl.FilterSamples()
 
 
-def TestLLM():
-    if args.run_llm:
-        # rv = pd.read_csv("data/test/lmm.csv")
-        llm.RunLLM()
-    elif args.quick_check:
-        llm.QuickCheckBatch()
-    elif args.get_llm:
-        llm.GetLLMOutput()
-        llm.OutputProcessing()
-
+# def TestLLM():
+#     if args.run_llm:
+#         # rv = pd.read_csv("data/test/lmm.csv")
+#         llm.RunLLM()
+#     elif args.quick_check:
+#         llm.QuickCheckBatch()
+#     elif args.get_llm:
+#         llm.GetLLMOutput()
+#         llm.OutputProcessing()
+#
 
 if not args.skip_llm:
     # TestLLM()

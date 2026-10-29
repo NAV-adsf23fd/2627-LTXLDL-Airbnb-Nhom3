@@ -46,7 +46,8 @@ PROMPT_TEMPLATE = (
     "Phân tích đánh giá sau và điền đúng schema. "
     "Chỉ gán khía cạnh THỰC SỰ được nhắc đến;\n"
     'đánh giá không có nội dung thì trả sentiment "mixed" '
-    "và các danh sách rỗng."
+    "và các danh sách rỗng.\n\n"
+    "Review: {text}"
 )
 
 

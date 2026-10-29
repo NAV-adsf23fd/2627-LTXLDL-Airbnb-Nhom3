@@ -4,20 +4,33 @@ from typing import Any
 import yaml
 
 BASE_URL = "https://data.insideairbnb.com/"
-LISTINGS = "data/listings.csv.gz"
-CALENDAR = "data/calendar.csv.gz"
-REVIEWS = "data/reviews.csv.gz"
-NEIGHBOURHOODS = "visualisations/neighbourhoods.geojson"
+LISTINGS = "listings.csv.gz"
+CALENDAR = "calendar.csv.gz"
+REVIEWS = "reviews.csv.gz"
+NEIGHBOURHOODS = "neighbourhoods.geojson"
 
-PC_LISTINGS = "data/samples/pc-listings.csv"
-PC_REVIEW = "data/samples/pc-review.csv"
-PC = "data/samples/pc.csv"
-PC_VUNG = "data/samples/pc-vung.csv"
+PC_LISTINGS = "data/phancong/pc-listings.csv"
+PC_REVIEW = "data/phancong/pc-review.csv"
+PC = "data/phancong/pc.csv"
+PC_VUNG = "data/phancong/pc-vung.csv"
 
 TEAM_LISTINGS = "data/processed/team-listings.csv"
 TEAM_REVIEW = "data/processed/team-review.csv"
 TEAM = "data/processed/team.csv"
 TEAM_VUNG = "data/processed/team-vung.csv"
+
+
+def GetDataURL(time, type):
+    if type == NEIGHBOURHOODS:
+        return (
+            BASE_URL + CONFIG.data_root + time + "/visualisations/" + type,
+            "data/raw/" + time + "/" + time + "_" + type,
+        )
+    else:
+        return (
+            BASE_URL + CONFIG.data_root + time + "/data/" + type,
+            "data/raw/" + time + "/" + time + "_" + type,
+        )
 
 
 # class giup share giua nhieu file

@@ -4,6 +4,7 @@ import sys
 from types import SimpleNamespace
 
 import src.download as dl
+from src import llm
 from src.utility import LoadConfig
 
 parser = argparse.ArgumentParser()
@@ -21,6 +22,9 @@ parser.add_argument(
 parser.add_argument(
     "--save-flags", help="Save this flags for later run", action="store_true"
 )
+parser.add_argument("--run-llm", action="store_true")
+parser.add_argument("--quick-check", action="store_true")
+parser.add_argument("--get-llm", action="store_true")
 
 
 args = parser.parse_args()
@@ -38,8 +42,6 @@ if args.save_flags:
     with open("configs/lastest_run.json", "w", encoding="utf-8") as f:
         json.dump(vars(args), f, indent=4, ensure_ascii=False)
 
-if args.skip_llm:
-    print("skiped llm\n")
 
 if args.config != None:
     LoadConfig(args.config)
@@ -49,3 +51,19 @@ if args.config != None:
 
     if not args.skip_filter:
         dl.FilterSamples()
+
+
+def TestLLM():
+    if args.run_llm:
+        # rv = pd.read_csv("data/test/lmm.csv")
+        llm.RunLLM()
+    elif args.quick_check:
+        llm.QuickCheckBatch()
+    elif args.get_llm:
+        llm.GetLLMOutput()
+        llm.OutputProcessing()
+
+
+if not args.skip_llm:
+    # TestLLM()
+    pass

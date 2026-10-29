@@ -9,3 +9,5 @@ test.ipynb
 pyrightconfig.json
 configs/lastest_run.json
 data/filtered
+data/test/
+src/old_llm.py

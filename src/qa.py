@@ -1,7 +1,9 @@
+import os
+
 import pandas as pd
-import os 
 
 from src.utility import *
+
 
 def clean_percent(val):
     if pd.isna(val):
@@ -55,20 +57,22 @@ for i in CONFIG.snapshots:
     aa["last_review"] = pd.to_datetime(aa["last_review"])
     aa["host_is_superhost"] = aa["host_is_superhost"].map({"t": True, "f": False})
     aa["host_has_profile_pic"] = aa["host_has_profile_pic"].map({"t": True, "f": False})
-    aa["host_identity_verified"] = aa["host_identity_verified"].map({"t": True, "f": False})
+    aa["host_identity_verified"] = aa["host_identity_verified"].map(
+        {"t": True, "f": False}
+    )
     aa["instant_bookable"] = aa["instant_bookable"].map({"t": True, "f": False})
     aa["has_availability"] = aa["has_availability"].map({"t": True, "f": False})
-    #TODO
+    # TODO
     # QA: loại bỏ duplicate theo dedupe_keys từ config
     aa = aa.drop_duplicates(subset=CONFIG.qa["dedupe_keys"], keep="first")
     # QA: cap minimum_nights theo min_nights_cap
     aa["minimum_nights"] = aa["minimum_nights"].clip(upper=CONFIG.qa["min_nights_cap"])
-    aa.to_csv("data/processed/" + i.strftime("%Y-%m-%d") + "/" + "cleaned_listings.csv", index=False)
+    aa.to_csv(
+        "data/processed/" + i.strftime("%Y-%m-%d") + "/" + "cleaned_listings.csv",
+        index=False,
+    )
 
-
-
-
-    #calendar
+    # calendar
     tmp_calendar = (
         "data/raw/"
         + i.strftime("%Y-%m-%d")
@@ -84,14 +88,15 @@ for i in CONFIG.snapshots:
     )
     bb["date"] = pd.to_datetime(bb["date"], format="%Y-%m-%d")
     bb["available"] = bb["available"].map({"t": True, "f": False})
-    #TODO
+    # TODO
     # QA: loại bỏ duplicate (listing_id + date)
     bb = bb.drop_duplicates(subset=["listing_id", "date"], keep="first")
-    bb.to_csv("data/processed/" + i.strftime("%Y-%m-%d") + "/" + "cleaned_calendar.csv", index=False)
+    bb.to_csv(
+        "data/processed/" + i.strftime("%Y-%m-%d") + "/" + "cleaned_calendar.csv",
+        index=False,
+    )
 
-
-
-    #reviews
+    # reviews
     tmp_reviews = (
         "data/raw/"
         + i.strftime("%Y-%m-%d")
@@ -104,41 +109,44 @@ for i in CONFIG.snapshots:
     c = c.rename(columns={"listing_id_x": "listing_id"})
     c["date"] = pd.to_datetime(c["date"], format="%Y-%m-%d")
     cc = c.drop(
-                columns=[
-                    "Lớp",
-                    "Nhóm",
-                    "Mã dữ liệu",
-                    "listing_id_y",
-                    "Unnamed: 0",
-                    "review_id",
-                ],
-                errors="ignore",
-            )
-    #TODO
+        columns=[
+            "Lớp",
+            "Nhóm",
+            "Mã dữ liệu",
+            "listing_id_y",
+            "Unnamed: 0",
+            "review_id",
+        ],
+        errors="ignore",
+    )
+    # TODO
     # QA: loại bỏ reviews có comments rỗng hoặc null
     cc = cc[cc["comments"].notna() & (cc["comments"].str.strip() != "")]
 
     d = cc.copy()
     d = d[d["Mẫu LLM"] == "x"]
-    dd = d.drop(
-        columns=["Mẫu LLM","Nhãn tay"]
+    dd = d.drop(columns=["Mẫu LLM", "Nhãn tay"])
+    # kết thúc mỗi vòng for sẽ xuất 1 file csv vào folder processed chính là dữ liệu sạch
+    # TODO
+    dd.to_csv(
+        "data/processed/" + i.strftime("%Y-%m-%d") + "/" + "cleaned_reviews_LLM.csv",
+        index=False,
     )
-    #kết thúc mỗi vòng for sẽ xuất 1 file csv vào folder processed chính là dữ liệu sạch
-    #TODO
-    dd.to_csv("data/processed/" + i.strftime("%Y-%m-%d") + "/" + "cleaned_reviews_LLM.csv",index=False)
-
 
     e = cc.copy()
     e = e[e["Nhãn tay"] == "x"]
-    ee = e.drop(
-        columns=["Mẫu LLM","Nhãn tay"]
+    ee = e.drop(columns=["Mẫu LLM", "Nhãn tay"])
+    # TODO
+    ee.to_csv(
+        "data/processed/"
+        + i.strftime("%Y-%m-%d")
+        + "/"
+        + "cleaned_reviews_nhantay.csv",
+        index=False,
     )
-    #TODO
-    ee.to_csv("data/processed/" + i.strftime("%Y-%m-%d") + "/" + "cleaned_reviews_nhantay.csv",index=False)
 
-    fin = cc.drop(
-        columns=["Mẫu LLM","Nhãn tay"]
+    fin = cc.drop(columns=["Mẫu LLM", "Nhãn tay"])
+    fin.to_csv(
+        "data/processed/" + i.strftime("%Y-%m-%d") + "/" + "cleaned_reviews.csv",
+        index=False,
     )
-    fin.to_csv("data/processed/" + i.strftime("%Y-%m-%d") + "/" + "cleaned_reviews.csv",index=False)
-
-

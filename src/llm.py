@@ -8,7 +8,7 @@ from google import genai
 from google.genai import types
 from pydantic import BaseModel, Field
 
-from src.utility import Llm
+from src.utility import CONFIG, Llm, Raw, Team
 
 load_dotenv()
 
@@ -68,6 +68,33 @@ def Init():
     )
 
     USER_PROMPT = f"Phân tích toàn bộ reviews trong đối tượng JSON này:\n\n{json.dumps(reviews['comments'].to_dict(), ensure_ascii=False)}"
+
+
+def GetReviews():
+    team_review = pd.read_csv(Team.reviews)
+    review_list = []
+
+    for t in CONFIG.snapshots:
+        time = t.strftime("%Y-%m-%d")
+        rv = pd.read_csv(Raw.reviews[time]).set_index("id")["comments"]
+        rv = rv.to_frame().merge(
+            team_review[["review_id", "Mẫu LLM"]],
+            left_on="id",
+            right_on="review_id",
+            how="right",
+        )
+        rv = rv[rv["Mẫu LLM"].notna()].drop(columns=["Mẫu LLM"])
+        review_list.append(rv)
+
+    reviews = (
+        pd.concat(review_list, axis=0, ignore_index=False)
+        .drop_duplicates(subset=["review_id"], keep="last")
+        .set_index("review_id")
+        .dropna()
+    )
+    reviews["comments"] = reviews["comments"].str.replace(r"\r?<br/>", "", regex=True)
+
+    reviews.to_csv(Llm.files["reviews"])
 
 
 def RunLLM():

@@ -1,6 +1,7 @@
 data/raw/
 data/assignment/team*
 data/filtered
+data/llm/llm-reviews.csv
 .env
 .venv/
 pyuet.sh

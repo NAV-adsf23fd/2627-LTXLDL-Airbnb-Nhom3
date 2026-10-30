@@ -84,7 +84,7 @@ class FreeBase:
         os.makedirs(base, exist_ok=True)
 
     def Create(self, name, tag, type):
-        self.files[name] = f"{self.base}_{tag}-{name}.{type}"
+        self.files[name] = f"{self.base}{tag}-{name}.{type}"
 
 
 Raw = BaseHasSnapshots(RAW_BASE)

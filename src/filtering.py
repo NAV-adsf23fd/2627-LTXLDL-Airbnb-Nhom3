@@ -14,6 +14,18 @@ def FilterListings(time):
         columns=[
             "listing_id",
             "analysis_area",
+            "Thành phố",
+            "listing_url",
+            "scrape_id",
+            "source",
+            "picture_url",
+            "host_url",
+            "host_profile_url",
+            "host_location",
+            "host_thumbnail_url",
+            "host_picture_url",
+            "host_has_profile_pic",
+            "license",
         ]
     )
     listings.to_csv(
@@ -43,6 +55,7 @@ def FilterReviews(time):
     reviews = reviews.drop(
         columns=[
             "review_id",
+            "Mẫu LLM",
         ]
     )
     reviews.to_csv(

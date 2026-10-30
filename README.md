@@ -23,16 +23,16 @@ Chạy với config
 -c, --config
 ```
 
-Bỏ qua bước tải dữ liệu
+Thêm bước tải dữ liệu
 
 ```
--d, --skip-download
+-d, --download
 ```
 
-Bỏ qua bước chạy LLM
+Thêm bước chạy LLM
 
 ```
--l, --skip-llm
+-l, --llm
 ```
 
 In log chi tiết
@@ -40,7 +40,7 @@ In log chi tiết
 -v, --verbose
 ```
 
-Bỏ qua bước lọc mẫu 
+Thêm bước lọc mẫu 
 ```
--f, --skip-filter
+-f, --filter
 ```

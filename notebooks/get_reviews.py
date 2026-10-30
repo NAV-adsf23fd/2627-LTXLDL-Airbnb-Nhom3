@@ -22,7 +22,10 @@ for t in config["snapshots"]:
     mrv = mrv[mrv["Mẫu LLM"].notna()].drop(columns=["Mẫu LLM"])
     review_list.append(mrv)
 
-reviews = pd.concat(review_list, axis=0, ignore_index=False).set_index("review_id")
+#%%
+reviews = pd.concat(review_list, axis=0, ignore_index=False).drop_duplicates(subset=["review_id"], keep="last").set_index("review_id").dropna()
+
+reviews["comments"] = reviews["comments"].str.replace(r"\r?<br/>", "", regex=True)
 
 
 #%%
@@ -46,6 +49,12 @@ reviews[["review_id", "comments"]].set_index("review_id").to_csv("data/processed
 #print(reviews.info())
 
 #%%
+listrv = []
+for t in config["snapshots"]:
+    time = t.strftime("%Y-%m-%d")
+    path = f"data/raw/{time}/{time}_reviews.csv.gz"
+    rv = pd.read_csv(path).set_index("id")["comments"]
+    listrv.append(rv)
 
 
     

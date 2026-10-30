@@ -4,8 +4,9 @@ import sys
 from types import SimpleNamespace
 
 import src.download as dl
+import src.filtering as fi
 from src import llm
-from src.utility import LoadConfig
+from src.utility import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-c", "--config", help="Add config", type=str)
@@ -18,9 +19,25 @@ parser.add_argument("-f", "--filter", help="Filtering team", action="store_true"
 parser.add_argument(
     "--save-flags", help="Save this flags for later run", action="store_true"
 )
+parser.add_argument("-t", "--test", action="store_true")
+
+
+def Init():
+    # for base in BASES:
+    #     os.makedirs(base, exist_ok=True)
+    LoadConfig()
+    Phancong.Create("pc", "csv")
+    Team.Create("team", "csv")
+    Raw.Create(CONFIG.snapshots, "raw", "csv.gz")
+    Filtered.Create(CONFIG.snapshots, "filtered", "csv")
+    Processed.Create(CONFIG.snapshots, "processed", "csv")
+
+    Llm.Create("reviews", "llm", "csv")
+    Llm.Create("response", "llm", "json")
 
 
 args = parser.parse_args()
+Init()
 
 if len(sys.argv) == 1:
     try:
@@ -39,12 +56,18 @@ if args.save_flags:
 if args.config != None:
     LoadConfig(args.config)
 
-    if args.download:
-        dl.Download(args.verbose)
+if args.download:
+    dl.Download(args.verbose)
 
-    if args.filter:
-        dl.FilterSamples()
+if args.filter:
+    dl.FilterSamples()
+    fi.Filter()
+
+
+if args.test:
+    print(Team)
 
 
 if args.llm:
+    llm.Init()
     llm.RunLLM()

@@ -1,5 +1,6 @@
 data/raw/
-data/processed/
+data/assignment/team*
+data/filtered
 .env
 .venv/
 pyuet.sh
@@ -8,6 +9,6 @@ notebooks/local
 test.ipynb
 pyrightconfig.json
 configs/lastest_run.json
-data/filtered
 data/test/
 src/old_llm.py
+backup/

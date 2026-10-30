@@ -1,21 +1,10 @@
-import os
-
 import pandas as pd
 
 from src.utility import *
 
-LoadConfig()
-
-team_listings = pd.read_csv(TEAM_LISTINGS, usecols=["listing_id", "analysis_area"])
-team_areas = pd.read_csv(TEAM_VUNG, index_col=0)
-team_reviews = pd.read_csv(
-    TEAM_REVIEW, usecols=["review_id", "Mẫu LLM", "Nhãn tay"], encoding="utf-8"
-)
-
 
 def FilterListings(time):
-    listings_path = "data/raw/" + time + "/" + time + "_listings.csv.gz"
-    listings = pd.read_csv(listings_path)
+    listings = pd.read_csv(Raw.listings[time])
 
     listings = listings.merge(
         team_listings, left_on="id", right_on="listing_id", how="right"
@@ -28,28 +17,26 @@ def FilterListings(time):
         ]
     )
     listings.to_csv(
-        "data/filtered/" + time + "/" + time + "_filtered_listings.csv",
+        Filtered.listings[time],
         index=False,
         encoding="utf-8",
     )
 
 
 def FilterCalendar(time):
-    calendar_path = "data/raw/" + time + "/" + time + "_calendar.csv.gz"
-    calendar = pd.read_csv(calendar_path)
+    calendar = pd.read_csv(Raw.calendar[time])
 
     calendar = calendar.merge(team_listings, on="listing_id", how="right")
     calendar = calendar.drop(columns=["analysis_area"])
     calendar.to_csv(
-        "data/filtered/" + time + "/" + time + "_filtered_calendar.csv",
+        Filtered.calendar[time],
         index=False,
         encoding="utf-8",
     )
 
 
-def FilterReview(time):
-    review_path = "data/raw/" + time + "/" + time + "_reviews.csv.gz"
-    reviews = pd.read_csv(review_path)
+def FilterReviews(time):
+    reviews = pd.read_csv(Raw.reviews[time])
     reviews = reviews.merge(
         team_reviews, left_on="id", right_on="review_id", how="right"
     )
@@ -59,16 +46,25 @@ def FilterReview(time):
         ]
     )
     reviews.to_csv(
-        "data/filtered/" + time + "/" + time + "_filtered_review.csv",
+        Filtered.reviews[time],
         index=False,
         encoding="utf-8",
     )
 
 
-for i in CONFIG.snapshots:
-    time = i.strftime("%Y-%m-%d")
-    os.makedirs("data/filtered" + "/" + time, exist_ok=True)
+def Filter():
+    global team_listings
+    global team_areas
+    global team_reviews
 
-    FilterListings(time)
-    FilterReview(time)
-    FilterCalendar(time)
+    team_listings = pd.read_csv(Team.listings, usecols=["listing_id", "analysis_area"])
+    team_areas = pd.read_csv(Team.areas, index_col=0)
+    team_reviews = pd.read_csv(
+        Team.reviews, usecols=["review_id", "Mẫu LLM", "Nhãn tay"], encoding="utf-8"
+    )
+
+    for i in CONFIG.snapshots:
+        time = i.strftime("%Y-%m-%d")
+        FilterListings(time)
+        FilterReviews(time)
+        FilterCalendar(time)

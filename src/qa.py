@@ -125,9 +125,7 @@ def QAReview(time):
     tag_regex = r"<[a-zA-Z/][^>]*>"
     br_regex = r"(?i)<br\s*/?>"
 
-    reviews["flag_html_in_comments"] = comments_raw.str.contains(
-        tag_regex, regex=True
-    )
+    reviews["flag_html_in_comments"] = comments_raw.str.contains(tag_regex, regex=True)
     reviews["comment_clean"] = (
         comments_raw.str.replace(br_regex, " ", regex=True)
         .str.replace(tag_regex, "", regex=True)
@@ -146,9 +144,7 @@ def QAReview(time):
         | is_blank(reviews["reviewer_id"])
     )
     id_valid = ~is_blank(reviews["id"])
-    reviews["flag_duplicate_id"] = (
-        reviews["id"].duplicated(keep=False) & id_valid
-    )
+    reviews["flag_duplicate_id"] = reviews["id"].duplicated(keep=False) & id_valid
 
     # ── 3. Kiểm tra định dạng ngày hợp lệ ──────────────────────────────
     if "date" in reviews.columns:
@@ -157,9 +153,6 @@ def QAReview(time):
         ).isna()
     else:
         reviews["flag_invalid_date"] = True
-
-    
-
 
     # ── 4. Tạo cờ tổng hợp lỗi (flag_any) ───────────────────────────────
     error_flags = [
@@ -249,9 +242,9 @@ def QACalendar(time):
 
     # 4. Kiểm tra danh mục available chỉ nhận "t" hoặc "f"
     availability = calendar["available"].astype("string").str.strip().str.lower()
-    calendar["flag_category_mismatch"] = (
-        calendar["available"].notna() & ~availability.isin(["t", "f"])
-    )
+    calendar["flag_category_mismatch"] = calendar[
+        "available"
+    ].notna() & ~availability.isin(["t", "f"])
 
     # 5. Đánh dấu trùng trong snapshot theo khóa listing_id + date
     valid_keys = (
@@ -281,9 +274,7 @@ def QACalendar(time):
                 numeric_values.mod(1).eq(0)
             ).astype("Int64")
         normalized["date"] = (
-            pd.to_datetime(
-                normalized["date"], format="%Y-%m-%d", errors="coerce"
-            )
+            pd.to_datetime(normalized["date"], format="%Y-%m-%d", errors="coerce")
             .dt.strftime("%Y-%m-%d")
             .astype("string")
         )
@@ -293,9 +284,7 @@ def QACalendar(time):
         key_hash = pd.util.hash_pandas_object(
             normalized[["listing_id", "date"]], index=False
         ).to_numpy()
-        row_hash = pd.util.hash_pandas_object(
-            normalized, index=False
-        ).to_numpy()
+        row_hash = pd.util.hash_pandas_object(normalized, index=False).to_numpy()
         return key_hash, row_hash
 
     cur_key, cur_row = normalized_hashes(calendar)
@@ -311,9 +300,7 @@ def QACalendar(time):
     conflict = np.zeros(len(calendar), dtype=bool)
     identical = np.zeros(len(calendar), dtype=bool)
     for other_time in other_times:
-        other_path = (
-            f"data/filtered/{other_time}/{other_time}_filtered_calendar.csv"
-        )
+        other_path = f"data/filtered/{other_time}/{other_time}_filtered_calendar.csv"
         other = pd.read_csv(other_path, usecols=required_columns)
         other_missing_columns = set(required_columns) - set(other.columns)
         if other_missing_columns:

@@ -62,6 +62,7 @@ if args.download:
 if args.filter:
     dl.FilterSamples()
     fi.Filter()
+    llm.GetReviews()
 
 
 if args.test:

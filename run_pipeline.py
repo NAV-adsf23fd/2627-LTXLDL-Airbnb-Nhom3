@@ -5,7 +5,7 @@ from types import SimpleNamespace
 
 import src.download as dl
 import src.filtering as fi
-from src import llm, qa
+from src import llm, qa, test
 from src.utility import *
 
 parser = argparse.ArgumentParser()
@@ -67,7 +67,7 @@ if args.filter:
 
 
 if args.test:
-    print(Team)
+    test.Test()
 
 
 if args.llm:

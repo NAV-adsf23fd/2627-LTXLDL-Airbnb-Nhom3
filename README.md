@@ -44,3 +44,19 @@ Thêm bước lọc mẫu
 ```
 -f, --filter
 ```
+
+Chạy qa
+```
+-q, --qa
+```
+
+### Để chạy LLM
+Copy .env.example 
+```
+cp .env.example .env
+```
+
+Mở file .env điền API. Ví dụ
+```
+GEMINI_API_KEY="ABCXYZ"
+```

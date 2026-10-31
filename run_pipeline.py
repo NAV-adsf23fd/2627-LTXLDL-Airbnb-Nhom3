@@ -5,7 +5,7 @@ from types import SimpleNamespace
 
 import src.download as dl
 import src.filtering as fi
-from src import llm
+from src import llm, qa
 from src.utility import *
 
 parser = argparse.ArgumentParser()
@@ -16,6 +16,7 @@ parser.add_argument(
     "-v", "--verbose", help="Increase output verbosity", action="store_true"
 )
 parser.add_argument("-f", "--filter", help="Filtering team", action="store_true")
+parser.add_argument("-q", "--qa", help="Run qa", action="store_true")
 parser.add_argument(
     "--save-flags", help="Save this flags for later run", action="store_true"
 )
@@ -72,3 +73,10 @@ if args.test:
 if args.llm:
     llm.Init()
     llm.RunLLM()
+
+if args.qa:
+    for t in CONFIG.snapshots:
+        time = t.strftime("%Y-%m-%d")
+        qa.QAListings(time)
+        qa.QACalendar(time)
+        qa.QAReviews(time)

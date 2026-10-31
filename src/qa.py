@@ -1,18 +1,19 @@
-import pandas as pd
 import html
+from typing import cast
 
-from src.utility import CONFIG
+import numpy as np
+import pandas as pd
 
-from src.utility import CONFIG
-
-
-def ExportFile(file, name, time):
-    file.to_csv(f"data/processed/{time}/{time}_flagged_{name}.csv")
+from src.utility import CONFIG, Filtered, Processed
 
 
 def QAListings(time):
-    listings = pd.read_csv(f"data/filtered/{time}/{time}_filtered_listings.csv.gz")
+    listings = pd.read_csv(Filtered.listings[time])
     qa_cfg = CONFIG.qa
+
+    listings["host_is_superhost"] = listings["host_is_superhost"] == "t"
+    listings["host_identity_verified"] = listings["host_identity_verified"] == "t"
+    listings["instant_bookable"] = listings["instant_bookable"] == "t"
 
     # ── 1. Loại bỏ bản ghi trùng lặp ─────────────────────────────────────
     # Giữ lần xuất hiện cuối cùng theo dedupe_keys (config: [id, last_scraped])
@@ -111,15 +112,12 @@ def QAListings(time):
     listings["flag_any"] = listings[flag_cols].any(axis=1)
 
     # Xuất file kết quả
-    export = listings
-    ExportFile(export, "listings", time)
+    listings.to_csv(Processed.listings[time], index=False)
 
 
-def QAReview(time):
-    reviews = pd.read_csv(f"data/filtered/{time}/{time}_filtered_reviews.csv.gz")
+def QAReviews(time):
+    reviews = pd.read_csv(Filtered.reviews[time])
 
-    # TODO: chỉ được viết vào đây
-    # ->
     comments_raw = reviews["comments"].fillna("").astype(str).map(html.unescape)
 
     tag_regex = r"<[a-zA-Z/][^>]*>"
@@ -163,23 +161,13 @@ def QAReview(time):
     ]
     reviews["flag_any"] = reviews[error_flags].any(axis=1)
 
-    # END_TOO:
-
-    export = reviews  # Điền vào đây tên dữ liệu cần lưu
-
-    ExportFile(export, "reviews", time)
+    reviews.to_csv(Processed.reviews[time], index=False)
 
 
 def QACalendar(time):
-    calendar = pd.read_csv(f"data/filtered/{time}/{time}_filtered_calendar.csv")
+    calendar = pd.read_csv(Filtered.calendar[time])
 
-    import numpy as np
-    import os
-
-    from src.utility import CONFIG, LoadConfig
-
-    if not hasattr(CONFIG, "snapshots"):
-        LoadConfig()
+    calendar["available"] = calendar["available"] == "t"
 
     qa_cfg = CONFIG.qa
     required_columns = [
@@ -211,9 +199,15 @@ def QACalendar(time):
     calendar["flag_missing"] = missing_values.any(axis=1)
 
     # 2. Kiểm tra kiểu dữ liệu
-    listing_ids = pd.to_numeric(calendar["listing_id"], errors="coerce")
-    minimum_nights = pd.to_numeric(calendar["minimum_nights"], errors="coerce")
-    maximum_nights = pd.to_numeric(calendar["maximum_nights"], errors="coerce")
+    listing_ids = cast(
+        pd.Series, pd.to_numeric(calendar["listing_id"], errors="coerce")
+    )
+    minimum_nights = cast(
+        pd.Series, pd.to_numeric(calendar["minimum_nights"], errors="coerce")
+    )
+    maximum_nights = cast(
+        pd.Series, pd.to_numeric(calendar["maximum_nights"], errors="coerce")
+    )
     dates = pd.to_datetime(calendar["date"], format="%Y-%m-%d", errors="coerce")
 
     calendar["flag_wrong_type"] = (
@@ -269,7 +263,9 @@ def QACalendar(time):
     def normalized_hashes(frame):
         normalized = frame[required_columns].copy()
         for column in ("listing_id", "minimum_nights", "maximum_nights"):
-            numeric_values = pd.to_numeric(normalized[column], errors="coerce")
+            numeric_values = cast(
+                pd.Series, pd.to_numeric(normalized[column], errors="coerce")
+            )
             normalized[column] = numeric_values.where(
                 numeric_values.mod(1).eq(0)
             ).astype("Int64")
@@ -281,10 +277,10 @@ def QACalendar(time):
         normalized["available"] = (
             normalized["available"].astype("string").str.strip().str.lower()
         )
-        key_hash = pd.util.hash_pandas_object(
+        key_hash = pd.util.hash_pandas_object(  # type: ignore
             normalized[["listing_id", "date"]], index=False
         ).to_numpy()
-        row_hash = pd.util.hash_pandas_object(normalized, index=False).to_numpy()
+        row_hash = pd.util.hash_pandas_object(normalized, index=False).to_numpy()  # type: ignore
         return key_hash, row_hash
 
     cur_key, cur_row = normalized_hashes(calendar)
@@ -300,7 +296,7 @@ def QACalendar(time):
     conflict = np.zeros(len(calendar), dtype=bool)
     identical = np.zeros(len(calendar), dtype=bool)
     for other_time in other_times:
-        other_path = f"data/filtered/{other_time}/{other_time}_filtered_calendar.csv"
+        other_path = Filtered.calendar[other_time]
         other = pd.read_csv(other_path, usecols=required_columns)
         other_missing_columns = set(required_columns) - set(other.columns)
         if other_missing_columns:
@@ -338,7 +334,4 @@ def QACalendar(time):
 
     # END_TOO:
 
-    export = calendar
-    os.makedirs(os.path.join("data", "processed", time), exist_ok=True)
-
-    ExportFile(export, "calendar", time)
+    calendar.to_csv(Processed.calendar[time], index=False)

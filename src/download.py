@@ -7,51 +7,42 @@ from src.utility import *
 
 
 def FilterSamples():
-    os.makedirs("data/processed", exist_ok=True)
-
-    pc_listings = pd.read_csv(PC_LISTINGS)
+    pc_listings = pd.read_csv(Phancong.listings)
     team_listings = pc_listings.loc[
         (pc_listings["Nhóm"] == CONFIG.nhom) & (pc_listings["Lớp"] == CONFIG.lop)
     ]
-    team_listings.to_csv(TEAM_LISTINGS)
+    team_listings.to_csv(Team.listings)
 
-    pc_review = pd.read_csv(PC_REVIEW)
+    pc_review = pd.read_csv(Phancong.reviews)
     team_review = pc_review.loc[
         (pc_review["Nhóm"] == CONFIG.nhom) & (pc_review["Lớp"] == CONFIG.lop)
     ]
-    team_review.to_csv(TEAM_REVIEW)
+    team_review.to_csv(Team.reviews)
 
-    pc_phancong = pd.read_csv(PC)
-    team_phancong = pc_phancong.loc[
-        (pc_phancong["Nhóm"] == CONFIG.nhom) & (pc_phancong["Lớp"] == CONFIG.lop)
-    ]
-    team_phancong.to_csv(TEAM)
-
-    pc_vung = pd.read_csv(PC_VUNG)
+    pc_vung = pd.read_csv(Phancong.areas)
     team_vung = pc_vung.loc[(pc_vung["Thành phố"] == CONFIG.city)]
-    team_vung.to_csv(TEAM_VUNG)
+    team_vung.to_csv(Team.areas)
 
 
 def Download(verbose):
     snapshots = [t.strftime("%Y-%m-%d") for t in CONFIG.snapshots]
-    os.makedirs("data/raw", exist_ok=True)
 
     for t in snapshots:
-        os.makedirs("data/raw/" + t, exist_ok=True)
+        os.makedirs(f"data/raw/{t}", exist_ok=True)
         if verbose:
             print(
                 "Downloading...\n",
-                BASE_URL + CONFIG.data_root + t + "/data/" + LISTINGS,
+                BASE_URL + CONFIG.data_root + t + "/data/" + RAW_LISTINGS,
                 "\n",
-                BASE_URL + CONFIG.data_root + t + "/data/" + CALENDAR,
+                BASE_URL + CONFIG.data_root + t + "/data/" + RAW_CALENDAR,
                 "\n",
-                BASE_URL + CONFIG.data_root + t + "/data/" + REVIEWS,
+                BASE_URL + CONFIG.data_root + t + "/data/" + RAW_REVIEWS,
                 "\n",
-                BASE_URL + CONFIG.data_root + t + "/data/" + NEIGHBOURHOODS,
+                BASE_URL + CONFIG.data_root + t + "/data/" + RAW_NEIGHBOURHOODS,
                 "\n",
             )
 
-        urllib.request.urlretrieve(*GetDataURL(t, LISTINGS))
-        urllib.request.urlretrieve(*GetDataURL(t, CALENDAR))
-        urllib.request.urlretrieve(*GetDataURL(t, REVIEWS))
-        urllib.request.urlretrieve(*GetDataURL(t, NEIGHBOURHOODS))
+        urllib.request.urlretrieve(*GetDataURL(t, RAW_LISTINGS))
+        urllib.request.urlretrieve(*GetDataURL(t, RAW_CALENDAR))
+        urllib.request.urlretrieve(*GetDataURL(t, RAW_REVIEWS))
+        urllib.request.urlretrieve(*GetDataURL(t, RAW_NEIGHBOURHOODS))

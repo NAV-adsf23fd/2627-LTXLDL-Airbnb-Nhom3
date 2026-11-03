@@ -1,4 +1,7 @@
 data/raw/
+data/assignment/team*
+data/filtered/
+data/llm/llm-reviews.csv
 data/processed/
 .env
 .venv/
@@ -8,6 +11,6 @@ notebooks/local
 test.ipynb
 pyrightconfig.json
 configs/lastest_run.json
-data/filtered
 data/test/
 src/old_llm.py
+backup/

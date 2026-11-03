@@ -4,29 +4,41 @@ import sys
 from types import SimpleNamespace
 
 import src.download as dl
-from src.utility import LoadConfig
+import src.filtering as fi
+from src import llm, qa, test
+from src.utility import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-c", "--config", help="Add config", type=str)
-parser.add_argument(
-    "-d", "--skip-download", help="Skip Download Data", action="store_true"
-)
-parser.add_argument("-l", "--skip-llm", help="Skip LLM", action="store_true")
+parser.add_argument("-d", "--download", help="Download Data", action="store_true")
+parser.add_argument("-l", "--llm", help="Run LLM", action="store_true")
 parser.add_argument(
     "-v", "--verbose", help="Increase output verbosity", action="store_true"
 )
-parser.add_argument(
-    "-f", "--skip-filter", help="Skip filtering samples", action="store_true"
-)
+parser.add_argument("-f", "--filter", help="Filtering team", action="store_true")
+parser.add_argument("-q", "--qa", help="Run qa", action="store_true")
 parser.add_argument(
     "--save-flags", help="Save this flags for later run", action="store_true"
 )
-parser.add_argument("--run-llm", action="store_true")
-parser.add_argument("--quick-check", action="store_true")
-parser.add_argument("--get-llm", action="store_true")
+parser.add_argument("-t", "--test", action="store_true")
+
+
+def Init():
+    # for base in BASES:
+    #     os.makedirs(base, exist_ok=True)
+    LoadConfig()
+    Phancong.Create("pc", "csv")
+    Team.Create("team", "csv")
+    Raw.Create(CONFIG.snapshots, "raw", "csv.gz")
+    Filtered.Create(CONFIG.snapshots, "filtered", "csv")
+    Processed.Create(CONFIG.snapshots, "processed", "csv")
+
+    Llm.Create("reviews", "llm", "csv")
+    Llm.Create("response", "llm", "json")
 
 
 args = parser.parse_args()
+Init()
 
 if len(sys.argv) == 1:
     try:
@@ -45,24 +57,26 @@ if args.save_flags:
 if args.config != None:
     LoadConfig(args.config)
 
-    if not args.skip_download:
-        dl.Download(args.verbose)
+if args.download:
+    dl.Download(args.verbose)
 
-    if not args.skip_filter:
-        dl.FilterSamples()
+if args.filter:
+    dl.FilterSamples()
+    fi.Filter()
+    llm.GetReviews()
 
 
-# def TestLLM():
-#     if args.run_llm:
-#         # rv = pd.read_csv("data/test/lmm.csv")
-#         llm.RunLLM()
-#     elif args.quick_check:
-#         llm.QuickCheckBatch()
-#     elif args.get_llm:
-#         llm.GetLLMOutput()
-#         llm.OutputProcessing()
-#
+if args.test:
+    test.Test()
 
-if not args.skip_llm:
-    # TestLLM()
-    pass
+
+if args.llm:
+    llm.Init()
+    llm.RunLLM()
+
+if args.qa:
+    for t in CONFIG.snapshots:
+        time = t.strftime("%Y-%m-%d")
+        qa.QAListings(time)
+        qa.QACalendar(time)
+        qa.QAReviews(time)

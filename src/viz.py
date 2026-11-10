@@ -1,6 +1,6 @@
+import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 
 from utility import CAM, XANH
 
@@ -64,4 +64,31 @@ def RawPerMonthAndMeanPerRolling(raw, ylabel, rolling, bound, left, right):
     ax.set_xlim(left, right)
     ax.set_ylabel(f"{ylabel} / tháng")
     ax.legend()
+    plt.show()
+
+
+def Choropleth(file, listing):
+    geo = gpd.read_file(file)
+    co_gia = listing.dropna(subset=["price"])
+
+    kpi = (
+        co_gia.groupby("neighbourhood")
+        .agg(gia=("price", "median"), n=("price", "size"))
+        .reset_index()
+    )
+    ban_do = geo.merge(kpi, on="neighbourhood", how="left")
+    ban_do["gia_hien"] = ban_do["gia"].where(
+        ban_do["n"] >= 30
+    )  # dưới 30 chỗ ở: không tô
+
+    ax = ban_do.plot(
+        column="gia_hien",
+        cmap="Blues",
+        legend=True,
+        edgecolor="#999",
+        linewidth=0.5,
+        missing_kwds={"color": "#eeeeee", "hatch": "///"},
+        legend_kwds={"label": "giá trung vị (CLP/đêm)"},
+    )
+    ax.set_axis_off()
     plt.show()

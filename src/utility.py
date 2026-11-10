@@ -127,3 +127,8 @@ def LoadConfig(path="configs/paris.yaml"):
     except OSError:
         print("Could not read file: ", path)
         sys.exit()
+
+
+# COLORS
+XANH = "#1E93AB"
+CAM = "#E8890C"

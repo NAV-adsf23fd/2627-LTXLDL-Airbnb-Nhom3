@@ -10,14 +10,6 @@ from pydantic import BaseModel, Field
 
 from src.utility import CONFIG, Llm, Raw, Team
 
-load_dotenv()
-
-KEY = os.getenv("GEMINI_API_KEY")
-MODEL = "gemini-3.5-flash-lite"
-
-
-client = genai.Client(api_key=KEY)
-
 Aspect = Literal[
     "location",
     "cleanliness",
@@ -56,6 +48,15 @@ def Init():
     global reviews
     global SYSTEM_INSTRUCTION
     global USER_PROMPT
+    global KEY
+    global MODEL
+    global client
+
+    load_dotenv()
+
+    KEY = os.getenv("GEMINI_API_KEY")
+    MODEL = "gemini-3.5-flash-lite"
+    client = genai.Client(api_key=KEY)
 
     reviews = pd.read_csv(Llm.files["reviews"]).set_index("review_id")
     SYSTEM_INSTRUCTION = (

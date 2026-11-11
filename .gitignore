@@ -14,4 +14,4 @@ configs/lastest_run.json
 data/test/
 src/old_llm.py
 backup/
-.vscode/
+.vscode

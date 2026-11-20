@@ -1,4 +1,5 @@
 import os
+import json
 import pandas as pd
 from src.utility import CONFIG, LoadConfig
 import numpy as np
@@ -77,7 +78,7 @@ def Tan():
     # ============================================================
     # 1. THAM SỐ
     # ============================================================
-    CSV_PATH = "data/processed/2026-03-21/2026-03-21_processed-listings.csv"
+    CSV_PATH = "data/processed/2026-03-21/2026-03-21_cleaned_listings.csv"
     THRESHOLD = 3                       # > 3 listing = Pro Host
     CURRENCY = "USD"                    # !! dataset không ghi đơn vị tiền, hãy kiểm tra nguồn rồi sửa
     TIER_BINS = [0, 1, 3, 10, 50, np.inf]
@@ -115,7 +116,7 @@ def Tan():
     # Doanh thu có giá trị cực đoan -> cắt đuôi (winsorize) để không làm lệch tỷ trọng
     rev_cap = df["estimated_revenue_l365d"].quantile(WINSOR_Q)
     df["rev_w"] = df["estimated_revenue_l365d"].clip(upper=rev_cap)
-    df["superhost"] = df["host_is_superhost"].astype(float)
+    df["superhost"] = (df["host_is_superhost"].astype(str).str.lower() == "t").astype(float)
 
     # ============================================================
     # 3. TÍNH KPI
@@ -215,6 +216,7 @@ def Tan():
     print("\n=== BẢNG 3. PRO HOST vs NHÓM CÒN LẠI ===")
     print(perf_table.to_string(index=False))
 
+    os.makedirs("data/processed/kpi", exist_ok=True)
     kpi.to_csv("data/processed/kpi/bang1_kpi.csv", index=False, encoding="utf-8-sig")
     tier.to_csv("data/processed/kpi/bang2_nhom_quy_mo.csv", index=False, encoding="utf-8-sig")
     perf_table.to_csv("data/processed/kpi/bang3_so_sanh_hieu_suat.csv", index=False, encoding="utf-8-sig")
@@ -490,3 +492,17 @@ def amenities_kpi( #Thanh
         "area_scores": pd.concat(area_parts, ignore_index=True),
         "top_amenities": pd.concat(top_parts, ignore_index=True),
     }
+
+if __name__ == "__main__":
+    print("--- CHẠY KPI THÁI ---")
+    Thai()
+    print("\n--- CHẠY KPI TÂN ---")
+    Tan()
+    print("\n--- CHẠY KPI THÀNH ---")
+    sample_path = "data/processed/2026-03-21/2026-03-21_cleaned_listings.csv"
+    if os.path.exists(sample_path):
+        sample_df = pd.read_csv(sample_path)
+        sample_df["snapshot"] = "2026-03-21"
+        res = amenities_kpi(sample_df)
+        print("Top amenities:")
+        print(res["top_amenities"].head(10).to_string(index=False))

@@ -15,7 +15,7 @@ def Tuan():
 
 
 def thanh(
-    listings,
+    listings=None,
     area_col="neighbourhood_cleansed",
     snapshot_col="snapshot",
     hot_quantile=0.75,
@@ -23,13 +23,59 @@ def thanh(
     out_path="data/processed/kpi_amenities.csv",
     verbose=True,
 ):
-    """Tính KPI tiện ích; nhận bảng listings đã được QA và lọc."""
+    """Tính KPI tiện ích; tự đọc listing đã QA theo config nếu không truyền listings."""
     import json
     from pathlib import Path
 
     import pandas as pd
 
-    if not isinstance(listings, pd.DataFrame):
+    from src.utility import CONFIG, LoadConfig, Processed
+
+    if listings is None:
+        if not hasattr(CONFIG, "snapshots"):
+            LoadConfig()
+
+        snapshots = sorted(CONFIG.snapshots)
+        listing_frames = []
+        for snapshot in snapshots:
+            time = (
+                snapshot.strftime("%Y-%m-%d")
+                if hasattr(snapshot, "strftime")
+                else snapshot
+            )
+            listing_path = Processed.listings.get(time)
+            if listing_path is None:
+                listing_path = (
+                    Path(Processed.base)
+                    / time
+                    / f"{time}_processed-listings.csv"
+                )
+            listing_path = Path(listing_path)
+            if not listing_path.exists():
+                raise FileNotFoundError(
+                    f"Không tìm thấy dữ liệu snapshot {time}: {listing_path}"
+                )
+
+            columns = set(pd.read_csv(listing_path, nrows=0).columns)
+            id_col = "id" if "id" in columns else "listing_id"
+            needed_columns = {
+                "amenities",
+                area_col,
+                id_col,
+                "estimated_occupancy_l365d",
+                "availability_365",
+            }
+            snapshot_listings = pd.read_csv(
+                listing_path,
+                usecols=lambda column: column in needed_columns,
+            )
+            snapshot_listings[snapshot_col] = time
+            listing_frames.append(snapshot_listings)
+
+        if not listing_frames:
+            raise ValueError("Không có snapshot nào trong CONFIG để tính KPI.")
+        listings = pd.concat(listing_frames, ignore_index=True)
+    elif not isinstance(listings, pd.DataFrame):
         raise TypeError("listings phải là pandas DataFrame.")
 
     missing = {

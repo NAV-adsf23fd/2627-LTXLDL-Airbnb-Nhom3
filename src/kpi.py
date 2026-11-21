@@ -1,45 +1,92 @@
-def Thai():
-    pass
+import numpy as np
+import pandas as pd
+import os 
+from src.utility import *
+import json
+
+
+os.makedirs("data/processed/kpi", exist_ok=True)
+
+from pathlib import Path
+
+
+
+
+
+
+def Thai(time):
+
+    # ── 1. Xác định 4 snapshot (12 tháng qua) ─────────────────────────────
+    snapshots = sorted(CONFIG.snapshots)          # sắp xếp tăng dần theo ngày
+    snapshot_strs = [s.strftime("%Y-%m-%d") for s in snapshots]
+
+    # ── 2. Đọc và gộp dữ liệu từ 4 folder trong processed ─────────────────
+    frames = []
+    for time in snapshot_strs:
+        path = f"data/processed/{time}/{time}_processed-listings.csv"
+        if not os.path.exists(path):
+            continue
+        df = pd.read_csv(path, usecols=["estimated_revenue_l365d"])
+        df["snapshot"] = time
+        frames.append(df)
+
+    if not frames:
+        return None
+
+    all_listings = pd.concat(frames, ignore_index=True)
+
+    # ── 3. Tính trung bình estimated_revenue_l365d ─────────────────────────
+    # Lấy tất cả listing có dữ liệu (không NaN), kể cả revenue = 0
+    valid = all_listings["estimated_revenue_l365d"].dropna()
+    estimated_annual_revenue = valid.mean()
+
+    # ── 4. Tạo bảng KPI và xuất ra file CSV trong processed ─────────────────
+    summary = (
+        all_listings.dropna(subset=["estimated_revenue_l365d"])
+        .groupby("snapshot")["estimated_revenue_l365d"]
+        .agg(
+            so_listing="count",
+            trung_binh="mean",
+            trung_vi="median"
+        )
+        .round(2)
+        .reset_index()
+    )
+
+    overall_row = pd.DataFrame([{
+        "snapshot": "Toàn bộ (12 tháng)",
+        "so_listing": len(valid),
+        "trung_binh": round(estimated_annual_revenue, 2),
+        "trung_vi": round(valid.median(), 2)
+    }])
+    kpi_df = pd.concat([summary, overall_row], ignore_index=True)
+    kpi_df["kpi_name"] = "Estimated Annual Revenue"
+
+    # Lưu file CSV vào data/processed/
+    output_path = "data/processed/kpi/kpi_total_price.csv"
+    kpi_df.to_csv(output_path, index=False, encoding="utf-8-sig")
 
 
 def Van():
     pass
 
 
-def Tan():
+def Tan(time):
     """
     Phân tích mức độ chuyên nghiệp hóa (Pro Host) của thị trường lưu trú ngắn hạn
     Bản có đơn vị đầy đủ cho các bảng và biểu đồ.
     """
-    import numpy as np
-    import pandas as pd
-    import matplotlib.pyplot as plt
-    from matplotlib.gridspec import GridSpec
-    from matplotlib.patches import FancyBboxPatch
-    import os 
-
     # ============================================================
     # 1. THAM SỐ
     # ============================================================
-    CSV_PATH = "data/processed/2026-03-21/2026-03-21_processed-listings.csv"
-    THRESHOLD = 3                       # > 3 listing = Pro Host
-    CURRENCY = "USD"                    # !! dataset không ghi đơn vị tiền, hãy kiểm tra nguồn rồi sửa
-    TIER_BINS = [0, 1, 3, 10, 50, np.inf]
-    TIER_LABELS = ["1", "2–3", "4–10", "11–50", "50+"]
-    TIER_NAMES = ["Cá nhân", "Nhỏ lẻ", "Chuyên nghiệp", "Công ty QL", "Quy mô lớn"]
-    TIER_COLORS = ["#2A9D8F", "#8AB17D", "#E9C46A", "#F4A261", "#E76F51"]
-    WINSOR_Q = 0.99                     # cắt đuôi doanh thu ở phân vị 99
+    CSV_PATH = Processed.listings[time]
+    PRO_HOST_THRESHOLD = CONFIG.kpi["pro_host_threashold"]                     # > 3 listing = Pro Host
+    CURRENCY = CONFIG.currency
+    TIER_BINS = CONFIG.kpi["tier_bins"]
+    TIER_LABELS = CONFIG.kpi["tier_labels"]
+    TIER_NAMES = CONFIG.kpi["tier_names"]
+    WINSOR_Q = CONFIG.kpi["winsor_q"]             # cắt đuôi doanh thu ở phân vị 99
 
-    BG, INK, MUTED = "#F7F6F2", "#1F2937", "#6B7280"
-    PRO_C, IND_C = "#E76F51", "#2A9D8F"
-
-    plt.rcParams.update({
-        "font.family": "sans-serif",
-        "font.sans-serif": ["Inter", "Segoe UI", "Arial", "DejaVu Sans"],
-        "figure.facecolor": BG, "axes.facecolor": BG,
-        "axes.edgecolor": "#D1D5DB", "axes.labelcolor": MUTED,
-        "xtick.color": MUTED, "ytick.color": MUTED, "text.color": INK,
-    })
 
     # ============================================================
     # 2. ĐỌC & CHUẨN BỊ DỮ LIỆU
@@ -48,7 +95,7 @@ def Tan():
     cols = ["id", K, "estimated_revenue_l365d", "estimated_occupancy_l365d"]
     df = pd.read_csv(CSV_PATH, usecols=cols).dropna(subset=[K]).copy()
 
-    df["is_pro"] = df[K] > THRESHOLD
+    df["is_pro"] = df[K] > PRO_HOST_THRESHOLD
     df["tier"] = pd.cut(df[K], TIER_BINS, labels=TIER_LABELS)
 
     # Trọng số 1/k: chủ nhà có k listing xuất hiện ~k lần trong mẫu theo listing,
@@ -114,113 +161,315 @@ def Tan():
     pd.set_option("display.max_columns", 50)
     pd.set_option("display.max_colwidth", 90)
 
-    print("\n=== BẢNG 1. KPI TỔNG HỢP ===")
-    print(kpi.to_string(index=False, justify="left"))
-    print("\n=== BẢNG 2. THEO NHÓM QUY MÔ CHỦ NHÀ ===")
-    print(tier.to_string(index=False))
-    print(f"(*) Doanh thu đã cắt đuôi ở P{int(WINSOR_Q*100)} = {rev_cap:,.0f} {CURRENCY}/năm")
 
-    os.makedirs("data/processed/kpi", exist_ok=True)
-    kpi.to_csv("data/processed/kpi/bang1_kpi.csv", index=False, encoding="utf-8-sig")
-    tier.to_csv("data/processed/kpi/bang2_nhom_quy_mo.csv", index=False, encoding="utf-8-sig")
-
-    # ============================================================
-    # 5. VẼ DASHBOARD (KPI + cơ cấu + thị phần)
-    # ============================================================
-    def style(ax, grid="y"):
-        for s in ("top", "right", "left" if grid == "x" else "bottom"):
-            ax.spines[s].set_visible(False)
-        ax.grid(axis=grid, color="#E5E7EB", lw=0.8)
-        ax.set_axisbelow(True)
-        ax.tick_params(length=0)
-
-    def title(ax, main, sub=None):
-        ax.set_title(main, loc="left", fontsize=13, fontweight="bold", color=INK,
-                    pad=26 if sub else 12)
-        if sub:
-            ax.text(0, 1.03, sub, transform=ax.transAxes, fontsize=9, color=MUTED)
-
-    fig = plt.figure(figsize=(18, 10.5))
-    gs = GridSpec(2, 2, height_ratios=[0.42, 1], width_ratios=[1, 1.5],
-                hspace=0.5, wspace=0.22, left=0.035, right=0.975, top=0.86, bottom=0.17)
-    fig.text(0.035, 0.955, "Mức độ chuyên nghiệp hóa của thị trường lưu trú ngắn hạn",
-            fontsize=24, fontweight="bold")
-    fig.text(0.035, 0.915,
-            f"Phân tích {n:,} listing  •  Pro Host = chủ nhà quản lý hơn {THRESHOLD} listing",
-            fontsize=12, color=MUTED)
-
-    # ---- Hàng 1: thẻ KPI ----
-    axk = fig.add_subplot(gs[0, :]); axk.axis("off")
-    axk.set_xlim(0, 1); axk.set_ylim(0, 1)
-    cards = [
-        (f"{share_listing:.1f} %", "PRO HOST SHARE · THEO LISTING",
-        f"{int(df.is_pro.sum())} / {n:,} listing thuộc chủ nhà >{THRESHOLD} listing", PRO_C),
-        (f"{share_host:.1f} %", "PRO HOST SHARE · THEO CHỦ NHÀ",
-        "% chủ nhà · ước tính, hiệu chỉnh sai lệch lấy mẫu", "#B5523B"),
-        (f"{share_rev:.1f} %", "THỊ PHẦN DOANH THU CỦA PRO",
-        f"% tổng doanh thu · cắt đuôi ở P{int(WINSOR_Q*100)}", "#E9A23B"),
-        (f"~{avg_pro_portfolio:.0f} listing", "QUY MÔ TB CỦA 1 PRO HOST",
-        "listing / chủ nhà chuyên nghiệp", IND_C),
-    ]
-    w, gap = 0.235, 0.02
-    for i, (big, lab, sub, c) in enumerate(cards):
-        x0 = i * (w + gap)
-        axk.add_patch(FancyBboxPatch((x0, 0.05), w, 0.9, boxstyle="square,pad=0",
-                                    transform=axk.transAxes, fc="white", ec="#E5E7EB", lw=1.2))
-        axk.add_patch(FancyBboxPatch((x0, 0.05), 0.006, 0.9, boxstyle="square,pad=0",
-                                    transform=axk.transAxes, fc=c, ec="none"))
-        axk.text(x0 + 0.02, 0.76, lab, fontsize=10, color=MUTED, fontweight="bold", va="center")
-        axk.text(x0 + 0.02, 0.45, big, fontsize=32, color=c, fontweight="bold", va="center")
-        axk.text(x0 + 0.02, 0.15, sub, fontsize=9.5, color=MUTED, va="center")
-
-    # ---- Hàng 2 trái: donut cơ cấu ----
-    ax = fig.add_subplot(gs[1, 0])
-    vals = tier_pct["listing"].values
-    ax.pie(vals, colors=TIER_COLORS, startangle=90, counterclock=False,
-        wedgeprops=dict(width=0.38, edgecolor=BG, linewidth=3))
-    ax.text(0, 0.08, f"{share_listing:.0f} %", ha="center", va="center",
-            fontsize=32, fontweight="bold", color=PRO_C)
-    ax.text(0, -0.22, "listing của\nPro Host", ha="center", va="center", fontsize=10, color=MUTED)
-    ax.legend(handles=[plt.Rectangle((0, 0), 1, 1, color=c) for c in TIER_COLORS],
-            labels=[f"{l} listing/chủ nhà · {nm}: {v:.1f} % ({int(c)} listing)"
-                    for l, nm, v, c in zip(TIER_LABELS, TIER_NAMES, vals, g.listings)],
-            loc="upper center", bbox_to_anchor=(0.5, 0.03), frameon=False, fontsize=9.5)
-    title(ax, "Cơ cấu listing theo quy mô chủ nhà", "Đơn vị: % tổng số listing")
-
-    # ---- Hàng 2 giữa: mỗi nhóm chiếm bao nhiêu thị trường ----
-    ax = fig.add_subplot(gs[1, 1])
-    x = np.arange(len(TIER_LABELS)); bw = 0.26
-    series = [("listing", "% số listing", "#9CA3AF"),
-            ("nights", "% số đêm có khách", "#F4A261"),
-            ("revenue", "% doanh thu", "#E76F51")]
-    for j, (key, lab, c) in enumerate(series):
-        bars = ax.bar(x + (j - 1) * bw, tier_pct[key], bw * 0.92, color=c, label=lab, zorder=3)
-        for b in bars:
-            ax.text(b.get_x() + b.get_width() / 2, b.get_height() + 0.8, f"{b.get_height():.0f}%",
-                    ha="center", fontsize=8.5, color=INK)
-    ax.axvline(1.5, color=INK, ls=(0, (4, 4)), lw=1.2)
-    ax.text(1.55, ax.get_ylim()[1] * 0.97, f"Pro Host (>{THRESHOLD} listing) →", fontsize=10,
-            color=PRO_C, fontweight="bold", va="top")
-    ax.set_xticks(x)
-    ax.set_xticklabels([f"{l} listing\n{nm}" for l, nm in zip(TIER_LABELS, TIER_NAMES)], fontsize=9.5)
-    ax.set_xlabel("Quy mô chủ nhà (số listing / chủ nhà)")
-    ax.set_ylabel("Tỷ trọng so với toàn thị trường (%)")
-    ax.legend(frameon=False, ncol=1, loc="upper right", bbox_to_anchor=(1, 0.98), fontsize=9.5)
-    style(ax)
-    title(ax, "Mỗi nhóm chiếm bao nhiêu thị trường?",
-        f"Đơn vị: % · doanh thu đã cắt đuôi ở P{int(WINSOR_Q*100)}")
-
-    fig.text(0.035, 0.025,
-            "Ghi chú: '% chủ nhà' ước tính bằng trọng số 1/calculated_host_listings_count để bù sai lệch lấy mẫu theo listing. "
-            f"Doanh thu và số đêm có khách là số ước tính của dataset; đơn vị tiền tệ ({CURRENCY}) cần kiểm tra theo nguồn dữ liệu.",
-            fontsize=9, color=MUTED)
-
-    plt.savefig("pro_host_dashboard.png", dpi=160, facecolor=BG)
-    plt.show()
-
-def Tuan():
-    pass
+    os.makedirs("data/processed/kpi/pro_host_aggregate",exist_ok=True)
+    kpi.to_csv("data/processed/kpi/pro_host_aggregate/"+{time}+"_kpi_pro_host_aggregate.csv", index=False, encoding="utf-8-sig")
+    os.makedirs("data/processed/kpi/pro_host_scale",exist_ok=True)
+    tier.to_csv("data/processed/pro_host_scale/"+{time}+"_kpi_pro_host_scale.csv", index=False, encoding="utf-8-sig")
 
 
-def Thanh():
-    pass
+ENGAGEMENT_HOT_QUANTILE = CONFIG.kpi["engagement_hot_quantile"]  # Hot = top 10% reviews_per_month
+ENGAGEMENT_CURRENCY = CONFIG.currency  # tiền tệ của cột price (đổi nếu không phải EUR)
+
+ENGAGEMENT_UNITS = {
+    "n_listings": "căn",
+    "active_rate": "tỷ lệ (0-1)",
+    "hot_rate": "tỷ lệ (0-1)",
+    "median_reviews_per_month": "review/tháng",
+    "median_reviews_ltm": "review/12 tháng",
+    "hot_lift": "lần so với toàn thành phố",
+    "n": "căn",
+    "median_price": f"{ENGAGEMENT_CURRENCY}/đêm",
+    "median_price_ratio": "lần so với giá trung vị khu vực",
+    "superhost_rate": "tỷ lệ (0-1)",
+    "verified_rate": "tỷ lệ (0-1)",
+    "instant_bookable_rate": "tỷ lệ (0-1)",
+    "median_accommodates": "khách",
+    "median_availability_365": "ngày/năm",
+    "hot_cut_reviews_per_month": "review/tháng",
+}
+
+def _tuan_load(time):
+    df = pd.read_csv(Processed.listings[time])
+    df = df[~df["flag_any"]].copy()  # chỉ tính KPI sau QA
+    df["number_of_reviews_ltm"] = df["number_of_reviews_ltm"].fillna(0)
+    # Căn chưa có review → reviews_per_month NaN: coi là 0 (không hoạt động)
+    df["reviews_per_month"] = df["reviews_per_month"].fillna(0)
+    df["is_active"] = df["number_of_reviews_ltm"] > 0
+    hot_cut = df.loc[df["is_active"], "reviews_per_month"].quantile(ENGAGEMENT_HOT_QUANTILE)
+    df["is_hot"] = df["is_active"] & (df["reviews_per_month"] >= hot_cut)
+    return df, hot_cut
+
+def _tuan_kpi(time):
+    df, hot_cut = _tuan_load(time)
+
+    # ── KPI theo khu vực ────────────────────────────────────────────────
+    g = df.groupby("neighbourhood_cleansed")
+    by_nb = pd.DataFrame(
+        {
+            "n_listings": g.size(),
+            "active_rate": g["is_active"].mean(),
+            "hot_rate": g["is_hot"].mean(),
+            "median_reviews_per_month": g["reviews_per_month"].median(),
+            "median_reviews_ltm": g["number_of_reviews_ltm"].median(),
+        }
+    ).reset_index()
+    # lift > 1: khu này có nhiều căn Hot hơn mức trung bình toàn thành phố
+    by_nb["hot_lift"] = by_nb["hot_rate"] / df["is_hot"].mean()
+    nb_long = by_nb.melt(
+        id_vars="neighbourhood_cleansed", var_name="kpi", value_name="value"
+    ).rename(columns={"neighbourhood_cleansed": "group"})
+    nb_long["level"] = "neighbourhood"
+
+    # ── Điều gì chung ở căn Hot? ────────────────────────────────────────
+    # price_ratio = giá / giá trung vị khu vực → loại bỏ ảnh hưởng vị trí,
+    # < 1 nghĩa là rẻ hơn mặt bằng khu vực ("giá rẻ?")
+    nb_median = df.groupby("neighbourhood_cleansed")["price"].transform("median")
+    df["price_ratio"] = df["price"] / nb_median
+
+    profile = (
+        df.groupby("is_hot")
+        .agg(
+            n=("id", "size"),
+            median_price=("price", "median"),
+            median_price_ratio=("price_ratio", "median"),
+            superhost_rate=("host_is_superhost", "mean"),
+            verified_rate=("host_identity_verified", "mean"),
+            instant_bookable_rate=("instant_bookable", "mean"),
+            median_accommodates=("accommodates", "median"),
+            median_availability_365=("availability_365", "median"),
+        )
+        .reset_index()
+    )
+    pf_long = profile.melt(id_vars="is_hot", var_name="kpi", value_name="value")
+    pf_long["group"] = pf_long["is_hot"].map({True: "Hot", False: "Không Hot"})
+    pf_long = pf_long.drop(columns="is_hot")
+    pf_long["level"] = "hot_vs_not_hot"
+
+    # ── Toàn thành phố ──────────────────────────────────────────────────
+    overall = pd.DataFrame(
+        {
+            "level": "overall",
+            "group": "all",
+            "kpi": ["n_listings", "active_rate", "hot_rate", "hot_cut_reviews_per_month"],
+            "value": [len(df), df["is_active"].mean(), df["is_hot"].mean(), hot_cut],
+        }
+    )
+
+    out = pd.concat([overall, nb_long, pf_long], ignore_index=True)
+    out["unit"] = out["kpi"].map(ENGAGEMENT_UNITS)
+    out = out[["level", "group", "kpi", "value", "unit"]]
+    os.makedirs("data/processed/kpi/engagement",exist_ok=True)
+    out.to_csv("data/processed/kpi/engagement"+{time}+"kpi_engagement.csv", index=False, encoding="utf-8-sig")
+def Tuan(time):
+    _tuan_kpi(time)
+
+
+
+AREA_COL = CONFIG.kpi["area_col"]
+AMENITIES_HOT_QUANTILE = CONFIG.kpi["amenities_hot_quantile"]
+TOP_N = CONFIG.kpi["top_n"]
+
+def parse_amenities(value):
+    try:
+        items = json.loads(str(value))
+    except (json.JSONDecodeError, TypeError):
+        return []
+    if not isinstance(items, list):
+        return []
+    return sorted({
+        " ".join(item.strip().lower().split())
+        for item in items
+        if isinstance(item, str) and item.strip()
+    })
+
+def thanh():
+    snapshots = sorted(CONFIG.snapshots)
+    listing_frames = []
+    snapshot_col="snapshot"
+    out_path="data/processed/kpi/kpi_amenities.csv"
+    for snapshot in snapshots:
+        time = (
+            snapshot.strftime("%Y-%m-%d")
+            if hasattr(snapshot, "strftime")
+            else snapshot
+        )
+        listing_path = "data/processed/"+time+"/"+time+"_processed-listings.csv"
+        if listing_path is None:
+            listing_path = (
+                Path(Processed.base)
+                / time
+                / f"{time}_processed-listings.csv"
+            )
+        listing_path = Path(listing_path)
+        if not listing_path.exists():
+            raise FileNotFoundError(
+                f"Không tìm thấy dữ liệu snapshot {time}: {listing_path}"
+            )
+
+        columns = set(pd.read_csv(listing_path, nrows=0).columns)
+        id_col = "id" if "id" in columns else "listing_id"
+        needed_columns = {
+            "amenities",
+            AREA_COL,
+            id_col,
+            "estimated_occupancy_l365d",
+            "availability_365",
+        }
+        snapshot_listings = pd.read_csv(
+            listing_path,
+            usecols=lambda column: column in needed_columns,
+        )
+        snapshot_listings[snapshot_col] = time
+        listing_frames.append(snapshot_listings)
+    
+    """Tính KPI tiện ích; nhận bảng listings đã được QA và lọc."""
+    listings = pd.read_csv(Processed.listings[time])
+    
+    if not isinstance(listings, pd.DataFrame):
+        raise TypeError("listings phải là pandas DataFrame.")
+
+    missing = {
+        "amenities",
+        AREA_COL,
+        snapshot_col,
+    } - set(listings.columns)
+    if missing:
+        raise ValueError(f"Thiếu cột bắt buộc: {', '.join(sorted(missing))}.")
+
+    id_col = "id" if "id" in listings.columns else "listing_id"
+    if id_col not in listings.columns:
+        raise ValueError("Thiếu cột id hoặc listing_id.")
+    if not 0 < AMENITIES_HOT_QUANTILE < 1:
+        raise ValueError("hot_quantile phải nằm trong khoảng (0, 1).")
+
+    data = listings.copy()
+
+    # Phòng thủ nhẹ: chỉ parse JSON hợp lệ thành danh sách tên duy nhất.
+    
+
+    data["amenities_list"] = data["amenities"].map(parse_amenities)
+    data["amenities_count"] = data["amenities_list"].map(len)
+    data = data[data["amenities_count"] > 0].copy()
+
+    if data.empty:
+        raise ValueError("Không còn listing hợp lệ để tính KPI.")
+
+    # Điểm theo trung vị tiện ích trong từng snapshot.
+    data["Amenities_Score"] = data.groupby(snapshot_col)["amenities_count"].transform(
+        lambda count: count.div(count.median()).mul(100).round(2)
+    )
+
+    area_parts = []
+    top_parts = []
+    snapshot_summaries = []
+
+    for snapshot, snapshot_data in data.groupby(snapshot_col, sort=False):
+        snapshot_data = snapshot_data.copy()
+
+        # Ưu tiên occupancy; availability là fallback khi snapshot cũ không có occupancy.
+        if "estimated_occupancy_l365d" in snapshot_data.columns:
+            occupancy = pd.to_numeric(
+                snapshot_data["estimated_occupancy_l365d"],
+                errors="coerce",
+            )
+        else:
+            occupancy = None
+
+        if occupancy is not None and occupancy.notna().any():
+            threshold = occupancy.quantile(AMENITIES_HOT_QUANTILE)
+            hot = occupancy.ge(threshold)
+            threshold_metric = "estimated_occupancy_l365d"
+        elif "availability_365" in snapshot_data.columns:
+            availability = pd.to_numeric(
+                snapshot_data["availability_365"],
+                errors="coerce",
+            )
+            if not availability.notna().any():
+                raise ValueError(f"Snapshot {snapshot}: không có chỉ số nhu cầu hợp lệ.")
+            threshold = availability.quantile(1 - AMENITIES_HOT_QUANTILE)
+            hot = availability.le(threshold)
+            threshold_metric = "availability_365"
+        else:
+            raise ValueError(
+                "Thiếu estimated_occupancy_l365d hoặc availability_365 "
+                "để xác định nhóm cháy phòng."
+            )
+
+        snapshot_data["is_hot"] = hot.fillna(False)
+        snapshot_summaries.append(
+            {
+                "snapshot": snapshot,
+                "listing_count": len(snapshot_data),
+                "median_amenities_count": snapshot_data["amenities_count"].median(),
+                "hot_metric": threshold_metric,
+                "hot_threshold": threshold,
+                "hot_share_pct": round(float(hot.mean() * 100), 1),
+            }
+        )
+
+        # KPI theo khu vực: quy mô, trung vị tiện ích và điểm trung vị.
+        area = (
+            snapshot_data.groupby(AREA_COL, observed=True)
+            .agg(
+                n_listings=(id_col, "size"),
+                median_amenities_count=("amenities_count", "median"),
+                Amenities_Score_Median=("Amenities_Score", "median"),
+            )
+            .round(2)
+            .reset_index()
+        )
+        area.insert(0, snapshot_col, snapshot)
+        area["hot_metric"] = threshold_metric
+        area_parts.append(area)
+
+        # So số liệu hot với nhóm còn lại để tìm tiện ích có hiệu ứng khác biệt.
+        hot_data = snapshot_data.loc[snapshot_data["is_hot"]]
+        rest_data = snapshot_data.loc[~snapshot_data["is_hot"]]
+
+        if hot_data.empty:
+            raise ValueError(f"Snapshot {snapshot}: không có listing cháy phòng.")
+
+        hot_count = hot_data["amenities_list"].explode().value_counts()
+        rest_count = rest_data["amenities_list"].explode().value_counts()
+        amenities = sorted(set(hot_count.index) | set(rest_count.index))
+
+        top = pd.DataFrame({
+            "amenity": amenities,
+            "hot_share": [
+                hot_count.get(name, 0) / len(hot_data) for name in amenities
+            ],
+            "rest_share": [
+                rest_count.get(name, 0) / len(rest_data)
+                if len(rest_data)
+                else 0.0
+                for name in amenities
+            ],
+        })
+        top["share_difference"] = top["hot_share"] - top["rest_share"]
+        top.insert(0, snapshot_col, snapshot)
+        top = (
+            top.sort_values(
+                ["share_difference", "hot_share"],
+                ascending=[False, False],
+            )
+            .head(max(1, int(TOP_N)))
+            .copy()
+        )
+        top["rank"] = range(1, len(top) + 1)
+        top["hot_metric"] = threshold_metric
+        top_parts.append(top)
+
+    area_scores = pd.concat(area_parts, ignore_index=True)
+    top_amenities = pd.concat(top_parts, ignore_index=True)
+    area_scores.to_csv(out_file, index=False)
+
+
+for i in CONFIG.snapshots:
+    time = i.strftime("%Y-%m-%d")
+    Tan(time)
+    Tuan(time)
+thanh()
+Thai()#chỉ mốc cuối
+    #tấn thái tuấn phải truyền tham số mốc tgian, thành không cần
+    #bị báo keyerror ở Processed.listings[time]

@@ -6,7 +6,7 @@ nhom: 3
 lop: UET.DSE2049 4
 
 qa:
-  price_max_clp: 5000000          # ngưỡng ngoại lai giá
+  price_max_eur: 5000             # ngưỡng ngoại lai giá (EUR/đêm, Paris)
   min_nights_cap: 365
   dedupe_keys: [id, last_scraped]
 

@@ -22,12 +22,15 @@ def QAListings(time):
         listings = listings.drop_duplicates(subset=dedupe_keys, keep="last")
 
     # ── 2. Làm sạch cột giá (price) ───────────────────────────────────────
-    # InsideAirbnb lưu dạng "$1,234.00" – chuyển về float
+    # InsideAirbnb Paris lưu dạng "$1,234.00" nhưng đơn vị THỰC TẾ là EUR
+    # (ký hiệu "$" chỉ là format hiển thị generic của InsideAirbnb, không phải USD)
+    # → Chỉ cần bỏ "$" và "," rồi chuyển về float; KHÔNG cần nhân tỷ giá.
     if "price" in listings.columns:
         listings["price"] = (
             listings["price"].astype(str).str.replace(r"[$,\s]", "", regex=True)
         )
         listings["price"] = pd.to_numeric(listings["price"], errors="coerce")
+        # Sau bước này, cột price có đơn vị EUR/đêm
 
     # ── 3. Ép kiểu các cột số thường gặp ──────────────────────────────────
     numeric_cols = [

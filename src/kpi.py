@@ -1,10 +1,3 @@
-import json
-import sys
-from pathlib import Path
-
-import pandas as pd
-
-
 def Thai():
     pass
 
@@ -21,7 +14,7 @@ def Tuan():
     pass
 
 
-def amenities_kpi(
+def thanh(
     listings,
     area_col="neighbourhood_cleansed",
     snapshot_col="snapshot",
@@ -31,6 +24,12 @@ def amenities_kpi(
     verbose=True,
 ):
     """Tính KPI tiện ích; nhận bảng listings đã được QA và lọc."""
+    import json
+    import sys
+    from pathlib import Path
+
+    import pandas as pd
+
     if not isinstance(listings, pd.DataFrame):
         raise TypeError("listings phải là pandas DataFrame.")
 
@@ -185,165 +184,146 @@ def amenities_kpi(
         area_scores.to_csv(out_file, index=False)
 
     if verbose:
-        print_amenities_report(
-            area_scores,
-            top_amenities,
-            snapshot_summaries,
-            hot_quantile=hot_quantile,
-            area_col=area_col,
-            snapshot_col=snapshot_col,
+        try:
+            sys.stdout.reconfigure(encoding="utf-8")
+        except (AttributeError, OSError, ValueError):
+            pass
+
+        latest_summary = max(snapshot_summaries, key=lambda row: row["snapshot"])
+        latest_snapshot = latest_summary["snapshot"]
+        latest_areas = area_scores.loc[area_scores[snapshot_col] == latest_snapshot]
+        latest_top = top_amenities.loc[
+            top_amenities[snapshot_col] == latest_snapshot
+        ].sort_values("rank")
+
+        highest = latest_areas.loc[latest_areas["Amenities_Score_Median"].idxmax()]
+        lowest = latest_areas.loc[latest_areas["Amenities_Score_Median"].idxmin()]
+        hot_metric = latest_summary["hot_metric"]
+        threshold_unit = (
+            "đêm / năm"
+            if hot_metric == "estimated_occupancy_l365d"
+            else "ngày trống / năm"
+        )
+
+        summary = pd.DataFrame(
+            [
+                {"Chỉ số": "Số snapshot phân tích", "Giá trị": len(snapshot_summaries), "Đơn vị": "mốc"},
+                {"Chỉ số": "Số khu vực", "Giá trị": len(latest_areas), "Đơn vị": "khu vực"},
+                {
+                    "Chỉ số": "Tổng số listing đưa vào KPI (mốc mới nhất)",
+                    "Giá trị": latest_summary["listing_count"],
+                    "Đơn vị": "listing",
+                },
+                {
+                    "Chỉ số": "Số tiện ích trung vị toàn thành phố",
+                    "Giá trị": latest_summary["median_amenities_count"],
+                    "Đơn vị": "tiện ích / listing",
+                },
+                {
+                    "Chỉ số": (
+                        "Amenities Score trung vị theo khu vực cao nhất: "
+                        f"{highest[area_col]}"
+                    ),
+                    "Giá trị": highest["Amenities_Score_Median"],
+                    "Đơn vị": "điểm (100 = trung vị snapshot)",
+                },
+                {
+                    "Chỉ số": (
+                        "Amenities Score trung vị theo khu vực thấp nhất: "
+                        f"{lowest[area_col]}"
+                    ),
+                    "Giá trị": lowest["Amenities_Score_Median"],
+                    "Đơn vị": "điểm (100 = trung vị snapshot)",
+                },
+                {"Chỉ số": 'Chỉ báo "cháy phòng"', "Giá trị": hot_metric, "Đơn vị": "-"},
+                {
+                    "Chỉ số": "Ngưỡng cháy phòng",
+                    "Giá trị": latest_summary["hot_threshold"],
+                    "Đơn vị": threshold_unit,
+                },
+            ]
+        )
+
+        by_snapshot = pd.DataFrame(
+            [
+                {
+                    "Snapshot": row["snapshot"],
+                    "Số listing (listing)": row["listing_count"],
+                    "Số tiện ích trung vị (tiện ích / listing)": row[
+                        "median_amenities_count"
+                    ],
+                    "Chỉ báo hot": row["hot_metric"],
+                    "Ngưỡng hot": row["hot_threshold"],
+                    "Tỷ lệ nhóm hot thực tế (%)": row["hot_share_pct"],
+                }
+                for row in snapshot_summaries
+            ]
+        )
+
+        area_columns = {
+            area_col: "Khu vực",
+            "n_listings": "Số listing (listing)",
+            "median_amenities_count": "Số tiện ích trung vị (tiện ích / listing)",
+            "Amenities_Score_Median": "Amenities Score trung vị (điểm)",
+        }
+        highest_areas = (
+            latest_areas.sort_values("Amenities_Score_Median", ascending=False)
+            .head(5)
+            .assign(**{"Nhóm": "Cao nhất"})
+        )
+        lowest_areas = (
+            latest_areas.sort_values("Amenities_Score_Median", ascending=True)
+            .head(5)
+            .assign(**{"Nhóm": "Thấp nhất"})
+        )
+        by_area = pd.concat([highest_areas, lowest_areas], ignore_index=True)
+        by_area = by_area.rename(columns=area_columns)[
+            [
+                "Nhóm",
+                "Khu vực",
+                "Số listing (listing)",
+                "Số tiện ích trung vị (tiện ích / listing)",
+                "Amenities Score trung vị (điểm)",
+            ]
+        ]
+
+        by_amenity = pd.DataFrame(
+            {
+                "Hạng": latest_top["rank"],
+                "Tiện ích": latest_top["amenity"],
+                "Tỷ lệ nhóm hot (%)": (latest_top["hot_share"] * 100).round(1),
+                "Tỷ lệ nhóm còn lại (%)": (latest_top["rest_share"] * 100).round(1),
+                "Chênh lệch (điểm %)": (latest_top["share_difference"] * 100).round(1),
+            }
+        )
+
+        def print_table(title, table):
+            print(title)
+            with pd.option_context("display.width", 200, "display.max_columns", None):
+                print(table.to_string(index=False))
+            print()
+
+        print_table(
+            f"=== BẢNG 1. KPI TỔNG HỢP (snapshot mới nhất: {latest_snapshot}) ===",
+            summary,
+        )
+        print_table("=== BẢNG 2. THEO SNAPSHOT (THỜI GIAN) ===", by_snapshot)
+        print_table(
+            "=== BẢNG 3. KHU VỰC THEO AMENITIES SCORE (mốc mới nhất) ===",
+            by_area,
+        )
+        print(
+            f"=== BẢNG 4. TIỆN ÍCH CỦA NHÓM CHÁY PHÒNG SO VỚI CÒN LẠI "
+            "(mốc mới nhất) ==="
+        )
+        with pd.option_context("display.width", 200, "display.max_columns", None):
+            print(by_amenity.to_string(index=False))
+        print(
+            f"(*) Nhóm cháy phòng = top {hot_quantile * 100:.0f}% theo chỉ báo trên; "
+            "estimated_occupancy_l365d là số ước tính từ review, không phải lượt đặt thật."
         )
 
     return {
         "area_scores": area_scores,
         "top_amenities": top_amenities,
     }
-
-
-def print_amenities_report(
-    area_scores,
-    top_amenities,
-    snapshot_summaries,
-    hot_quantile=0.75,
-    area_col="neighbourhood_cleansed",
-    snapshot_col="snapshot",
-):
-    """In báo cáo tổng hợp KPI tiện ích."""
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-    except (AttributeError, OSError, ValueError):
-        pass
-
-    latest_summary = max(snapshot_summaries, key=lambda row: row["snapshot"])
-    latest_snapshot = latest_summary["snapshot"]
-    latest_areas = area_scores.loc[area_scores[snapshot_col] == latest_snapshot]
-    latest_top = top_amenities.loc[
-        top_amenities[snapshot_col] == latest_snapshot
-    ].sort_values("rank")
-
-    highest = latest_areas.loc[latest_areas["Amenities_Score_Median"].idxmax()]
-    lowest = latest_areas.loc[latest_areas["Amenities_Score_Median"].idxmin()]
-    hot_metric = latest_summary["hot_metric"]
-    threshold_unit = (
-        "đêm / năm"
-        if hot_metric == "estimated_occupancy_l365d"
-        else "ngày trống / năm"
-    )
-
-    summary = pd.DataFrame(
-        [
-            {"Chỉ số": "Số snapshot phân tích", "Giá trị": len(snapshot_summaries), "Đơn vị": "mốc"},
-            {"Chỉ số": "Số khu vực", "Giá trị": len(latest_areas), "Đơn vị": "khu vực"},
-            {
-                "Chỉ số": "Tổng số listing đưa vào KPI (mốc mới nhất)",
-                "Giá trị": latest_summary["listing_count"],
-                "Đơn vị": "listing",
-            },
-            {
-                "Chỉ số": "Số tiện ích trung vị toàn thành phố",
-                "Giá trị": latest_summary["median_amenities_count"],
-                "Đơn vị": "tiện ích / listing",
-            },
-            {
-                "Chỉ số": (
-                    "Amenities Score trung vị theo khu vực cao nhất: "
-                    f"{highest[area_col]}"
-                ),
-                "Giá trị": highest["Amenities_Score_Median"],
-                "Đơn vị": "điểm (100 = trung vị snapshot)",
-            },
-            {
-                "Chỉ số": (
-                    "Amenities Score trung vị theo khu vực thấp nhất: "
-                    f"{lowest[area_col]}"
-                ),
-                "Giá trị": lowest["Amenities_Score_Median"],
-                "Đơn vị": "điểm (100 = trung vị snapshot)",
-            },
-            {"Chỉ số": 'Chỉ báo "cháy phòng"', "Giá trị": hot_metric, "Đơn vị": "-"},
-            {
-                "Chỉ số": "Ngưỡng cháy phòng",
-                "Giá trị": latest_summary["hot_threshold"],
-                "Đơn vị": threshold_unit,
-            },
-        ]
-    )
-
-    by_snapshot = pd.DataFrame(
-        [
-            {
-                "Snapshot": row["snapshot"],
-                "Số listing (listing)": row["listing_count"],
-                "Số tiện ích trung vị (tiện ích / listing)": row[
-                    "median_amenities_count"
-                ],
-                "Chỉ báo hot": row["hot_metric"],
-                "Ngưỡng hot": row["hot_threshold"],
-                "Tỷ lệ nhóm hot thực tế (%)": row["hot_share_pct"],
-            }
-            for row in snapshot_summaries
-        ]
-    )
-
-    area_columns = {
-        area_col: "Khu vực",
-        "n_listings": "Số listing (listing)",
-        "median_amenities_count": "Số tiện ích trung vị (tiện ích / listing)",
-        "Amenities_Score_Median": "Amenities Score trung vị (điểm)",
-    }
-    highest_areas = (
-        latest_areas.sort_values("Amenities_Score_Median", ascending=False)
-        .head(5)
-        .assign(**{"Nhóm": "Cao nhất"})
-    )
-    lowest_areas = (
-        latest_areas.sort_values("Amenities_Score_Median", ascending=True)
-        .head(5)
-        .assign(**{"Nhóm": "Thấp nhất"})
-    )
-    by_area = pd.concat([highest_areas, lowest_areas], ignore_index=True)
-    by_area = by_area.rename(columns=area_columns)[
-        [
-            "Nhóm",
-            "Khu vực",
-            "Số listing (listing)",
-            "Số tiện ích trung vị (tiện ích / listing)",
-            "Amenities Score trung vị (điểm)",
-        ]
-    ]
-
-    by_amenity = pd.DataFrame(
-        {
-            "Hạng": latest_top["rank"],
-            "Tiện ích": latest_top["amenity"],
-            "Tỷ lệ nhóm hot (%)": (latest_top["hot_share"] * 100).round(1),
-            "Tỷ lệ nhóm còn lại (%)": (latest_top["rest_share"] * 100).round(1),
-            "Chênh lệch (điểm %)": (latest_top["share_difference"] * 100).round(1),
-        }
-    )
-
-    def print_table(title, table):
-        print(title)
-        with pd.option_context("display.width", 200, "display.max_columns", None):
-            print(table.to_string(index=False))
-        print()
-
-    print_table(
-        f"=== BẢNG 1. KPI TỔNG HỢP (snapshot mới nhất: {latest_snapshot}) ===",
-        summary,
-    )
-    print_table("=== BẢNG 2. THEO SNAPSHOT (THỜI GIAN) ===", by_snapshot)
-    print_table(
-        "=== BẢNG 3. KHU VỰC THEO AMENITIES SCORE (mốc mới nhất) ===",
-        by_area,
-    )
-    print(
-        f"=== BẢNG 4. TIỆN ÍCH CỦA NHÓM CHÁY PHÒNG SO VỚI CÒN LẠI "
-        "(mốc mới nhất) ==="
-    )
-    with pd.option_context("display.width", 200, "display.max_columns", None):
-        print(by_amenity.to_string(index=False))
-    print(
-        f"(*) Nhóm cháy phòng = top {hot_quantile * 100:.0f}% theo chỉ báo trên; "
-        "estimated_occupancy_l365d là số ước tính từ review, không phải lượt đặt thật."
-    )

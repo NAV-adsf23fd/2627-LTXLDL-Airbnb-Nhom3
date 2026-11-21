@@ -1,0 +1,1273 @@
+{
+  "results": [
+    {
+      "review_id": "49229932",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "noise"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "64893907",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "109210532",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "115657983",
+      "info": {
+        "sentiment": "mixed",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [
+          "cleanliness"
+        ],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "116298580",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "value",
+          "amenities",
+          "safety"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "152360448",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "160520151",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "240552200",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness",
+          "host"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "240596292",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness",
+          "host",
+          "value"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "246355752",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness",
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "252098394",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "252553098",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "271450287",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "278003130",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "305478858",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness"
+        ],
+        "aspects_negative": [
+          "amenities"
+        ],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "321452323",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "345487259",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "noise"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "448526444",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "noise",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "449284871",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness",
+          "host"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "529741977",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "575068616",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host"
+        ],
+        "aspects_negative": [
+          "cleanliness"
+        ],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "588973958",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "769765174",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "value",
+          "safety"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "431608838799634196",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness",
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "496124446301299376",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness",
+          "host",
+          "value"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "525216997603002477",
+      "info": {
+        "sentiment": "negative",
+        "aspects_positive": [],
+        "aspects_negative": [
+          "cleanliness",
+          "value",
+          "noise",
+          "amenities"
+        ],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "590413789471648593",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "host",
+          "value"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "656368732282164192",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "value",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "664310613620825617",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "noise",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "686715914811683744",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "value",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "704194907100362887",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "host",
+          "value",
+          "amenities"
+        ],
+        "aspects_negative": [
+          "noise"
+        ],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "707098854830524408",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness",
+          "host",
+          "value"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "725136669775360754",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "736713923555365518",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "value",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "748358787871308779",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "value",
+          "amenities",
+          "neighbors"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "757757960693046186",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "value",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "810744637572759394",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "value"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "815117067127875691",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "value",
+          "neighbors"
+        ],
+        "aspects_negative": [
+          "noise"
+        ],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "834631619409768432",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness",
+          "host",
+          "neighbors"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "848362574521345606",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "value"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "860689527697770642",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "894762024795698218",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "904916611198521521",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "cleanliness",
+          "host",
+          "noise"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "909311065671576173",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "918653280398067993",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness",
+          "host",
+          "noise",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "926666283301105170",
+      "info": {
+        "sentiment": "negative",
+        "aspects_positive": [
+          "cleanliness"
+        ],
+        "aspects_negative": [
+          "location",
+          "noise"
+        ],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "928855676400462745",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "947688909683170299",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host"
+        ],
+        "aspects_negative": [
+          "amenities"
+        ],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "952688641392996360",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness",
+          "host",
+          "noise"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "955601725214279693",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "959292443614721081",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "960018346975277397",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "987530323189646533",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "991215765640704063",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "997629857367959680",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "cleanliness",
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1011508025619045760",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1013716422505508520",
+      "info": {
+        "sentiment": "mixed",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [
+          "noise"
+        ],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1034728887641148067",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness",
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1078835470037777551",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "host",
+          "safety",
+          "neighbors"
+        ],
+        "aspects_negative": [
+          "cleanliness"
+        ],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1078860795463990758",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness",
+          "host"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1100656322651513437",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1107109284289390792",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "value"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1115179611729628260",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "value",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1133997390677209303",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "value",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1153551710517524344",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness",
+          "host",
+          "value"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1183945988428541318",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "amenities",
+          "safety"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1195522869965132165",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1200646095621604080",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1215135178426880201",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "safety"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1215797910811090137",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1215799064541161756",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1218011874476209383",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "host"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1218781431711817009",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1228884595660389964",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "value",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1249940943281129185",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1257155430535983959",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "value"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1258602955825059011",
+      "info": {
+        "sentiment": "mixed",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [
+          "value"
+        ],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1287578637321824873",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "cleanliness",
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1302817138552438246",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1309320835715220264",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+
+    {
+      "review_id": "1324569540779362492",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1401376477544498247",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1418804381376301253",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "cleanliness",
+          "host"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1422383908158680912",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "noise"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1422398829095012660",
+      "info": {
+        "sentiment": "mixed",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [
+          "noise"
+        ],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1426735455067144424",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1429697391763791987",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1433232811714330378",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "cleanliness",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1433957596152862056",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1438328323225135385",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1439815960034562461",
+      "info": {
+        "sentiment": "mixed",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [
+          "amenities"
+        ],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1446374944651777916",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1447034713695065850",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1447755936439343936",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1448532643512099733",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1468013978203153964",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "value"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1470245979504219180",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1489755631632818066",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "host",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1499240733204501395",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "neighbors"
+        ],
+        "aspects_negative": [
+          "value"
+        ],
+        "language": "en"
+      }
+    },
+    {
+      "review_id": "1508665965357817729",
+      "info": {
+        "sentiment": "positive",
+        "aspects_positive": [
+          "location",
+          "cleanliness",
+          "noise",
+          "amenities"
+        ],
+        "aspects_negative": [],
+        "language": "en"
+      }
+    }
+  ]
+}

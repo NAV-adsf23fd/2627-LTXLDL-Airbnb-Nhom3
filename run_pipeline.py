@@ -35,6 +35,7 @@ def Init():
 
     Llm.Create("reviews", "llm", "csv")
     Llm.Create("response", "llm", "json")
+    Llm.Create("comments", "baseline", "csv")
 
 
 args = parser.parse_args()

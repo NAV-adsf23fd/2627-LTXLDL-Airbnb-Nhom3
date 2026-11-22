@@ -24,23 +24,22 @@ def FilterSamples():
     team_vung.to_csv(Team.areas)
 
 
-def Download(verbose):
+def Download():
     snapshots = [t.strftime("%Y-%m-%d") for t in CONFIG.snapshots]
 
     for t in snapshots:
         os.makedirs(f"data/raw/{t}", exist_ok=True)
-        if verbose:
-            print(
-                "Downloading...\n",
-                BASE_URL + CONFIG.data_root + t + "/data/" + RAW_LISTINGS,
-                "\n",
-                BASE_URL + CONFIG.data_root + t + "/data/" + RAW_CALENDAR,
-                "\n",
-                BASE_URL + CONFIG.data_root + t + "/data/" + RAW_REVIEWS,
-                "\n",
-                BASE_URL + CONFIG.data_root + t + "/data/" + RAW_NEIGHBOURHOODS,
-                "\n",
-            )
+        print(
+            "Downloading...\n",
+            BASE_URL + CONFIG.data_root + t + "/data/" + RAW_LISTINGS,
+            "\n",
+            BASE_URL + CONFIG.data_root + t + "/data/" + RAW_CALENDAR,
+            "\n",
+            BASE_URL + CONFIG.data_root + t + "/data/" + RAW_REVIEWS,
+            "\n",
+            BASE_URL + CONFIG.data_root + t + "/data/" + RAW_NEIGHBOURHOODS,
+            "\n",
+        )
 
         urllib.request.urlretrieve(*GetDataURL(t, RAW_LISTINGS))
         urllib.request.urlretrieve(*GetDataURL(t, RAW_CALENDAR))

@@ -84,6 +84,7 @@ if args.qa:
         qa.QAListings(time)
         qa.QACalendar(time)
         qa.QAReviews(time)
+    qa.QAReport()
 
 if args.baseline:
     RunBaseline()

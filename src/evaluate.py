@@ -1,12 +1,9 @@
-"""So sánh kết quả dự đoán (LLM / baseline) với nhãn tay (label.json).
-
-Chạy:
-    python src/evaluate.py --label label.json --pred data/llm/llm-response.json --out llm_eval.json
-"""
-import argparse
 import json
 from collections import defaultdict
 from pathlib import Path
+
+import matplotlib.pyplot as plt
+import pandas as pd
 
 ASPECT_FIELDS = ("aspects_positive", "aspects_negative")
 
@@ -46,7 +43,9 @@ def evaluate(label, pred):
     n = len(ids)
 
     if n == 0:
-        raise ValueError("Không có review_id nào trùng giữa file nhãn tay và file dự đoán.")
+        raise ValueError(
+            "Không có review_id nào trùng giữa file nhãn tay và file dự đoán."
+        )
 
     out = {"n": n, "missing": missing}
 
@@ -116,20 +115,100 @@ def report(res):
             print(f"  {a:<13}{p:>8.2%}{rc:>8.2%}{f1:>8.2%}{sup:>9}")
 
 
-if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--label", default="label.json")
-    ap.add_argument("--pred", default="data/llm/llm-response.json")
-    ap.add_argument("--out", default="llm_eval.json")
-    a = ap.parse_args()
+def plot_evaluation(resllm, resbaseline, out_path="figures/eval_comparison.png"):
+    """Vẽ biểu đồ so sánh LLM và Baseline."""
 
-    res = evaluate(load(a.label), load(a.pred))
-    report(res)
+    # Tạo thư mục nếu chưa có
+    Path(out_path).parent.mkdir(parents=True, exist_ok=True)
 
-    res_serializable = dict(res)
-    res_serializable["confusion"] = {
-        f"{g}->{p}": c for (g, p), c in res["confusion"].items()
+    # Thiết lập giao diện biểu đồ
+    fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+    fig.suptitle(
+        "So sánh hiệu năng: LLM vs Baseline (Regex)", fontsize=16, fontweight="bold"
+    )
+
+    # --- BIỂU ĐỒ 1: Sentiment Accuracy ---
+    acc_data = pd.DataFrame(
+        {
+            "Model": ["LLM", "Baseline"],
+            "Accuracy": [resllm["sentiment_acc"], resbaseline["sentiment_acc"]],
+        }
+    )
+    acc_data.plot(
+        kind="bar",
+        x="Model",
+        y="Accuracy",
+        ax=axes[0],
+        color=["#4C72B0", "#DD8452"],
+        legend=False,
+    )
+    axes[0].set_title("Sentiment Accuracy", fontsize=14)
+    axes[0].set_ylim(0, 1)
+    axes[0].set_ylabel("Tỷ lệ đúng")
+    axes[0].set_xticklabels(["LLM", "Baseline"], rotation=0)
+    # Ghi số liệu lên đầu cột
+    for p in axes[0].patches:
+        axes[0].annotate(
+            f"{p.get_height():.2%}",
+            (p.get_x() + p.get_width() / 2.0, p.get_height()),
+            ha="center",
+            va="bottom",
+            fontsize=12,
+            fontweight="bold",
+        )
+
+    # Hàm phụ trợ để vẽ biểu đồ Aspect F1
+    def plot_aspect_f1(field, title, ax):
+        # Lấy dữ liệu F1 của từng aspect
+        llm_data = {a: v[2] for a, v in resllm[field]["per_aspect"].items()}
+        base_data = {a: v[2] for a, v in resbaseline[field]["per_aspect"].items()}
+
+        # Gộp vào DataFrame (đảm bảo hiển thị đủ aspect kể cả khi 1 model bị thiếu)
+        df = pd.DataFrame({"LLM": llm_data, "Baseline": base_data}).fillna(0)
+
+        # Vẽ
+        df.plot(kind="bar", ax=ax, color=["#4C72B0", "#DD8452"])
+        ax.set_title(title, fontsize=14)
+        ax.set_ylim(0, 1)
+        ax.set_ylabel("F1-Score")
+        ax.set_xticklabels(df.index, rotation=45, ha="right")
+        ax.legend(title="Model")
+
+    # --- BIỂU ĐỒ 2 & 3: Aspect F1 ---
+    plot_aspect_f1("aspects_positive", "F1-Score: Aspects Positive (Khen)", axes[1])
+    plot_aspect_f1("aspects_negative", "F1-Score: Aspects Negative (Chê)", axes[2])
+
+    # Căn chỉnh khoảng cách
+    plt.tight_layout()
+
+    # Lưu file
+    plt.savefig(out_path, dpi=300, bbox_inches="tight")
+
+
+def RunEvaluate():
+    label = load("data/llm/label.json")
+    llm = load("data/llm/llm-response.json")
+    baseline = load("data/llm/baseline-comments.json")
+
+    resllm = evaluate(label, llm)
+    report(resllm)
+
+    resbaseline = evaluate(label, baseline)
+    report(resbaseline)
+
+    res_serializable_llm = dict(resllm)
+    res_serializable_llm["confusion"] = {
+        f"{g}->{p}": c for (g, p), c in resllm["confusion"].items()
     }
-    Path(a.out).parent.mkdir(parents=True, exist_ok=True)
-    with open(a.out, "w", encoding="utf-8") as f:
-        json.dump(res_serializable, f, ensure_ascii=False, indent=2)
+
+    res_serializable_baseline = dict(resbaseline)
+    res_serializable_baseline["confusion"] = {
+        f"{g}->{p}": c for (g, p), c in resbaseline["confusion"].items()
+    }
+    with open("data/llm/out_evaluate_llm.json", "w", encoding="utf-8") as f:
+        json.dump(res_serializable_llm, f, ensure_ascii=False, indent=2)
+
+    with open("data/llm/out_evaluate_baseline.json", "w", encoding="utf-8") as f:
+        json.dump(res_serializable_baseline, f, ensure_ascii=False, indent=2)
+
+    plot_evaluation(resllm, resbaseline, out_path="figures/eval_comparison.png")

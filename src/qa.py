@@ -118,19 +118,21 @@ def QAListings(time):
 def QAReviews(time):
     reviews = pd.read_csv(Filtered.reviews[time])
 
+    reviews["Label"] = reviews["Nhãn tay"] == "x"
+
     comments_raw = reviews["comments"].fillna("").astype(str).map(html.unescape)
 
     tag_regex = r"<[a-zA-Z/][^>]*>"
     br_regex = r"(?i)<br\s*/?>"
 
     reviews["flag_html_in_comments"] = comments_raw.str.contains(tag_regex, regex=True)
-    reviews["comment_clean"] = (
+    reviews["comments"] = (
         comments_raw.str.replace(br_regex, " ", regex=True)
         .str.replace(tag_regex, "", regex=True)
         .str.replace(r"\s+", " ", regex=True)
         .str.strip()
     )
-    reviews["flag_empty_comments"] = reviews["comment_clean"].eq("")
+    reviews["flag_empty_comments"] = reviews["comments"].eq("")
 
     # ── 2. Kiểm tra thiếu khóa & Trùng lặp ID ──────────────────────────
     def is_blank(s):

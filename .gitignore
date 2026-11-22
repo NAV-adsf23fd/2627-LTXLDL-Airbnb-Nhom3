@@ -1,4 +1,5 @@
 data/raw/
+data/test/
 data/assignment/team*
 data/filtered/
 data/llm/llm-reviews.csv

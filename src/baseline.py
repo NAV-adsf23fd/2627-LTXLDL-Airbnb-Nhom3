@@ -1,9 +1,10 @@
+import json
 import re
 
 import numpy as np
 import pandas as pd
 
-from src.utility import CONFIG, Llm, Processed
+from src.utility import Llm
 
 ASPECT_POSITIVE = {
     "location": (
@@ -142,17 +143,34 @@ def ExtractAspectsRow(text):
     return pos, neg
 
 
-def RunBaseline():
-    reviewsList = [
-        pd.read_csv(Processed.reviews[time.strftime("%Y-%m-%d")]).dropna(
-            subset=["id", "comments"]
+def SaveJson(comments, path):
+    results = []
+    for idx, row in comments.iterrows():
+        pos = (
+            row["aspects_positive"] if isinstance(row["aspects_positive"], list) else []
         )
-        for time in CONFIG.snapshots
-    ]
-    comments = pd.concat(reviewsList, ignore_index=False)[["id", "comments"]].set_index(
-        "id"
-    )
-    comments.index = comments.index.astype("int64")
+        neg = (
+            row["aspects_negative"] if isinstance(row["aspects_negative"], list) else []
+        )
+
+        results.append(
+            {
+                "review_id": str(idx),
+                "info": {
+                    "sentiment": row["sentiment"],
+                    "aspects_positive": pos,
+                    "aspects_negative": neg,
+                    "language": "en",  # Mặc định tiếng Anh
+                },
+            }
+        )
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump({"results": results}, f, ensure_ascii=False, indent=4)
+
+
+def RunBaseline():
+    comments = pd.read_csv(Llm.files["reviews"], dtype={"review_id": "string"})
+    comments = comments.set_index("review_id")
 
     extracted = comments["comments"].apply(ExtractAspectsRow)
     comments["aspects_positive"] = [x[0] for x in extracted]
@@ -160,11 +178,10 @@ def RunBaseline():
 
     n_pos = comments["aspects_positive"].apply(len)
     n_neg = comments["aspects_negative"].apply(len)
-    comments["score"] = n_pos - n_neg
     comments["sentiment"] = np.select(
         [n_pos > n_neg, n_pos < n_neg],
         ["positive", "negative"],
         default="mixed",
     )
 
-    comments.to_csv(Llm.files["comments"], index=True)
+    SaveJson(comments, Llm.files["comments"])

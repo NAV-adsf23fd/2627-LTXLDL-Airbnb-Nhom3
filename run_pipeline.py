@@ -6,6 +6,8 @@ from types import SimpleNamespace
 import src.download as dl
 import src.filtering as fi
 from src import llm, qa, test
+from src.baseline import RunBaseline
+from src.evaluate import RunEvaluate
 from src.utility import *
 
 parser = argparse.ArgumentParser()
@@ -21,6 +23,8 @@ parser.add_argument(
     "--save-flags", help="Save this flags for later run", action="store_true"
 )
 parser.add_argument("-t", "--test", action="store_true")
+parser.add_argument("-b", "--baseline", action="store_true")
+parser.add_argument("-e", "--evaluate", action="store_true")
 
 
 def Init():
@@ -35,7 +39,8 @@ def Init():
 
     Llm.Create("reviews", "llm", "csv")
     Llm.Create("response", "llm", "json")
-    Llm.Create("comments", "baseline", "csv")
+    Llm.Create("test_response", "llm", "json")
+    Llm.Create("comments", "baseline", "json")
 
 
 args = parser.parse_args()
@@ -66,10 +71,8 @@ if args.filter:
     fi.Filter()
     llm.GetReviews()
 
-
 if args.test:
     test.Test()
-
 
 if args.llm:
     llm.Init()
@@ -81,3 +84,9 @@ if args.qa:
         qa.QAListings(time)
         qa.QACalendar(time)
         qa.QAReviews(time)
+
+if args.baseline:
+    RunBaseline()
+
+if args.evaluate:
+    RunEvaluate()

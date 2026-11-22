@@ -1,7 +1,8 @@
 # File chạy thử mấy cái linh tinh
-from src.baseline import RunBaseline
+from src.llm_new import Init, RunLLM
 
 
 def Test():
     print("Hello world!")
-    RunBaseline()
+    Init()
+    RunLLM()

@@ -162,6 +162,38 @@ def QAReviews(time):
     reviews["flag_any"] = reviews[error_flags].any(axis=1)
 
     reviews.to_csv(Processed.reviews[time], index=False)
+    #  Tạo và xuất bảng quy tắc QA ────────────────────
+    rules_meta = [
+        ("QA_REV_01", "flag_html_in_comments", "Warning", "Comment chứa thẻ HTML trước khi làm sạch"),
+        ("QA_REV_02", "flag_empty_comments",   "Error",   "Comment rỗng hoặc chỉ chứa khoảng trắng/HTML"),
+        ("QA_REV_03", "flag_missing_ids",      "Error",   "Thiếu id, listing_id hoặc reviewer_id"),
+        ("QA_REV_04", "flag_duplicate_id",     "Error",   "Trùng lặp giá trị cột id"),
+        ("QA_REV_05", "flag_invalid_date",     "Error",   "Cột date thiếu hoặc sai định dạng YYYY-MM-DD"),
+        ("QA_REV_ALL", "flag_any",             "Summary", "Tổng hợp dòng vi phạm ít nhất 1 lỗi mức Error"),
+    ]
+
+    total_rows = len(reviews)
+    summary_rows = []
+    for rule_id, col, severity, desc in rules_meta:
+        failed_count = int(reviews[col].sum()) if col in reviews.columns else 0
+        passed_count = total_rows - failed_count
+        fail_rate = round((failed_count / total_rows * 100), 2) if total_rows > 0 else 0.0
+
+        summary_rows.append({
+            "time_period": time,
+            "rule_id": rule_id,
+            "flag_column": col,
+            "severity": severity,
+            "rule_description": desc,
+            "total_rows": total_rows,
+            "passed_rows": passed_count,
+            "failed_rows": failed_count,
+            "fail_rate_pct": fail_rate,
+            "status": "PASS" if failed_count == 0 else ("WARN" if severity == "Warning" else "FAIL"),
+        })
+
+    qa_path = Processed.reviews[time].replace(".csv", "_qa_rules.csv")
+    pd.DataFrame(summary_rows).to_csv(qa_path, index=False, encoding="utf-8-sig")
 
 
 def QACalendar(time):

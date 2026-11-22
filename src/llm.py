@@ -98,6 +98,64 @@ def GetReviews():
     reviews.to_csv(Llm.files["reviews"])
 
 
+def CleanLLM(input_path, output_path):
+    with open(input_path, encoding="utf-8") as f:
+        data = json.load(f)["results"]
+
+    cleaned_results = []
+    seen_ids = set()
+
+    stats = {"overlap_fixed": 0, "mixed_fixed": 0, "duplicates_removed": 0}
+
+    for r in data:
+        rid = str(r["review_id"])
+
+        # 1. Khử trùng lặp ID (nếu có)
+        if rid in seen_ids:
+            stats["duplicates_removed"] += 1
+            continue
+        seen_ids.add(rid)
+
+        info = r["info"]
+        pos = set(info.get("aspects_positive", []))
+        neg = set(info.get("aspects_negative", []))
+        sent = info.get("sentiment", "mixed")
+
+        # 2. Sửa lỗi "Vừa khen vừa chê" cùng 1 aspect
+        overlap = pos.intersection(neg)
+        if overlap:
+            stats["overlap_fixed"] += 1
+            for aspect in overlap:
+                pos.remove(aspect)  # Ưu tiên giữ lại ở Negative
+
+        # 3. Sửa lỗi "Mixed mà không có Negative aspect" -> Đổi thành Positive
+        if sent == "mixed" and len(neg) == 0:
+            sent = "positive"
+            stats["mixed_fixed"] += 1
+
+        # LƯU Ý: KHÔNG đổi positive -> mixed. Giữ nguyên logic tính điểm (pos - neg)
+
+        cleaned_results.append(
+            {
+                "review_id": rid,
+                "info": {
+                    "sentiment": sent,
+                    "aspects_positive": sorted(pos),
+                    "aspects_negative": sorted(neg),
+                    "language": info.get("language", "en"),
+                },
+            }
+        )
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump({"results": cleaned_results}, f, ensure_ascii=False, indent=4)
+
+    print(f"Đã làm sạch file LLM. Lưu tại {output_path}")
+    print(f" - Số ID trùng lặp đã xóa: {stats['duplicates_removed']}")
+    print(f" - Số ca sửa lỗi Aspect trùng: {stats['overlap_fixed']}")
+    print(f" - Số ca sửa lỗi Mixed (không có negative): {stats['mixed_fixed']}")
+
+
 def RunLLM():
     response = client.models.generate_content(
         model=MODEL,

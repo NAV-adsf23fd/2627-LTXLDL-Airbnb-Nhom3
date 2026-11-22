@@ -412,3 +412,127 @@ def thanh():
     top_amenities.to_csv(
         KPI_DIR / "kpi_amenities_top.csv", index=False, encoding="utf-8-sig"
     )
+
+
+# ============================================================
+# 5. HÀM CỦA VAN (Guest Satisfaction Score + LLM Sentiment)
+# ============================================================
+def Van(time):
+    KPI_DIR = Path("data/processed/kpi")
+    os.makedirs(KPI_DIR / "van_satisfaction", exist_ok=True)
+
+    # ── 1. Đọc dữ liệu từ Listings (Phân nhóm điểm) ─────────────────────
+    listings = pd.read_csv(Processed.listings[time])
+
+    # Phân nhóm điểm (Bins)
+    bins = [0, 4.0, 4.5, 5.01]
+    labels = ["< 4 sao", "4 - 4.5 sao", "> 4.5 sao"]
+
+    listings["score_group"] = pd.cut(
+        listings["review_scores_rating"], bins=bins, labels=labels, right=False
+    )
+    # Xử lý các căn chưa có đánh giá (NaN)
+    listings["score_group"] = (
+        listings["score_group"]
+        .cat.add_categories("Chưa có đánh giá")
+        .fillna("Chưa có đánh giá")
+    )
+
+    # ── 2. Đọc dữ liệu Reviews (Tính độ dài bình luận) ─────────────────
+    reviews = pd.read_csv(
+        Processed.reviews[time], usecols=["id", "listing_id", "comments"]
+    )
+    reviews["comment_length"] = reviews["comments"].fillna("").astype(str).str.len()
+    reviews["review_id"] = reviews["id"].astype(str)
+
+    # ── 3. Đọc kết quả LLM (Tính tỷ lệ tiêu cực) ───────────────────────
+    llm_path = Llm.files["response"]  # Trỏ tới data/llm/llm-response.json
+
+    if os.path.exists(llm_path):
+        with open(llm_path, "r", encoding="utf-8") as f:
+            llm_data = json.load(f)["results"]
+
+        llm_df = pd.DataFrame(
+            [
+                {"review_id": str(r["review_id"]), "sentiment": r["info"]["sentiment"]}
+                for r in llm_data
+            ]
+        )
+    else:
+        print(
+            f"[{time}] Cảnh báo: Không tìm thấy file LLM tại {llm_path}. Tỷ lệ tiêu cực sẽ bằng 0."
+        )
+        llm_df = pd.DataFrame(columns=["review_id", "sentiment"])
+
+    # ── 4. Ghép dữ liệu (Merge) ────────────────────────────────────────
+    # Ghép Review với LLM
+    reviews_merged = reviews.merge(llm_df, on="review_id", how="left")
+
+    # Ghép Review với Listings để biết Review đó thuộc nhóm điểm nào
+    reviews_full = reviews_merged.merge(
+        listings[["id", "score_group"]],
+        left_on="listing_id",
+        right_on="id",
+        how="left",
+        suffixes=("", "_listing"),
+    )
+
+    # Tính cột đánh dấu tiêu cực (1 nếu negative, 0 nếu không)
+    reviews_full["is_negative"] = (reviews_full["sentiment"] == "negative").astype(int)
+
+    # ── 5. Tổng hợp KPI theo Nhóm điểm ─────────────────────────────────
+    # 5.1. Tính KPI từ Listings (Số lượng, Điểm trung bình)
+    kpi_listings = (
+        listings.groupby("score_group", observed=False)
+        .agg(
+            num_listings=("id", "count"),
+            avg_rating=("review_scores_rating", "mean"),
+            avg_cleanliness=("review_scores_cleanliness", "mean"),
+            avg_location=("review_scores_location", "mean"),
+        )
+        .reset_index()
+    )
+
+    # 5.2. Tính KPI từ Reviews (Độ dài chữ, Tỷ lệ tiêu cực)
+    kpi_reviews = (
+        reviews_full.groupby("score_group", observed=False)
+        .agg(
+            avg_comment_length=("comment_length", "mean"),
+            negative_ratio=("is_negative", "mean"),  # Trung bình của 0 và 1
+            num_reviews=("review_id", "count"),
+        )
+        .reset_index()
+    )
+
+    # 5.3. Ghép 2 bảng KPI lại
+    kpi_df = kpi_listings.merge(kpi_reviews, on="score_group", how="left")
+
+    # Điền 0 cho các nhóm không có review
+    kpi_df[["avg_comment_length", "negative_ratio", "num_reviews"]] = kpi_df[
+        ["avg_comment_length", "negative_ratio", "num_reviews"]
+    ].fillna(0)
+
+    # Làm tròn và format
+    kpi_df["avg_rating"] = kpi_df["avg_rating"].round(2)
+    kpi_df["avg_cleanliness"] = kpi_df["avg_cleanliness"].round(2)
+    kpi_df["avg_location"] = kpi_df["avg_location"].round(2)
+    kpi_df["avg_comment_length"] = kpi_df["avg_comment_length"].round(0).astype(int)
+    kpi_df["negative_ratio"] = (kpi_df["negative_ratio"] * 100).round(2)  # Đổi ra %
+
+    # Đổi tên cột cho đẹp
+    kpi_df.rename(
+        columns={
+            "num_listings": "Số căn hộ",
+            "avg_rating": "Điểm TB",
+            "avg_cleanliness": "Điểm Sạch sẽ",
+            "avg_location": "Điểm Vị trí",
+            "avg_comment_length": "Độ dài BL TB (ký tự)",
+            "negative_ratio": "Tỷ lệ Phàn nàn (%)",
+            "num_reviews": "Số lượng BL",
+        },
+        inplace=True,
+    )
+
+    # ── 6. Xuất file ───────────────────────────────────────────────────
+    out_file = KPI_DIR / "van_satisfaction" / f"{time}_kpi_van_satisfaction.csv"
+    kpi_df.to_csv(out_file, index=False, encoding="utf-8-sig")

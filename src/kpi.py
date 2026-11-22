@@ -447,6 +447,10 @@ def thanh():
     top_amenities.to_csv(
         KPI_DIR / "kpi_amenities_top.csv", index=False, encoding="utf-8-sig"
     )
+    return {
+        "area_scores": area_scores,
+        "top_amenities": top_amenities
+    }
 
 
 # ============================================================

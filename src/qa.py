@@ -169,8 +169,6 @@ def QAReviews(time):
 def QACalendar(time):
     calendar = pd.read_csv(Filtered.calendar[time])
 
-    calendar["available"] = calendar["available"] == "t"
-
     qa_cfg = CONFIG.qa
     required_columns = [
         "listing_id",
@@ -334,6 +332,5 @@ def QACalendar(time):
     error_flags = [column for column in flag_columns if column not in info_flags]
     calendar["flag_any"] = calendar[error_flags].any(axis=1)
 
-    # END_TOO:
-
+    calendar["available"] = calendar["available"] == "t"
     calendar.to_csv(Processed.calendar[time], index=False)

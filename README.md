@@ -35,11 +35,6 @@ Thêm bước chạy LLM
 -l, --llm
 ```
 
-In log chi tiết
-```
--v, --verbose
-```
-
 Thêm bước lọc mẫu 
 ```
 -f, --filter
@@ -48,6 +43,26 @@ Thêm bước lọc mẫu
 Chạy qa
 ```
 -q, --qa
+```
+
+Chạy Baseline
+```
+-b, --baseline
+```
+
+Chạy Evaluate
+```
+-e, --evaluate
+```
+
+Chạy KPI
+```
+-k, --kpi
+```
+
+Chạy Viz
+```
+-v, --viz
 ```
 
 ### Để chạy LLM

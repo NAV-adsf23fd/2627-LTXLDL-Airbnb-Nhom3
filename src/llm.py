@@ -98,6 +98,58 @@ def GetReviews():
     reviews.to_csv(Llm.files["reviews"])
 
 
+def CleanLLM():
+    with open("data/llm/llm-response.json", encoding="utf-8") as f:
+        data = json.load(f)["results"]
+
+    cleaned_results = []
+
+    stats = {"overlap_fixed": 0, "mixed_fixed": 0}
+
+    for r in data:
+        rid = str(r["review_id"])
+
+        info = r["info"]
+        positive = set(info.get("aspects_positive", []))
+        negative = set(info.get("aspects_negative", []))
+        sentiment = info.get("sentiment", "mixed")
+
+        # Sửa lỗi "Vừa khen vừa chê" cùng 1 aspect
+        overlap = positive.intersection(negative)
+        if overlap:
+            stats["overlap_fixed"] += 1
+            for aspect in overlap:
+                positive.remove(aspect)  # Ưu tiên giữ lại ở Negative
+
+        # Sửa lỗi sentiment
+        if sentiment == "mixed" and (len(positive) - len(negative)) != 0:
+            stats["mixed_fixed"] += 1
+            if len(positive) - len(negative) > 0:
+                sentiment = "positive"
+            elif len(positive) - len(negative) < 0:
+                sentiment = "negative"
+
+        # output
+        cleaned_results.append(
+            {
+                "review_id": rid,
+                "info": {
+                    "sentiment": sentiment,
+                    "aspects_positive": sorted(positive),
+                    "aspects_negative": sorted(negative),
+                    "language": info.get("language", "en"),
+                },
+            }
+        )
+
+    with open("data/llm/llm-clean_response.json", "w", encoding="utf-8") as f:
+        json.dump({"results": cleaned_results}, f, ensure_ascii=False, indent=4)
+
+    print("Đã làm sạch file LLM.")
+    print(f" - Số ca sửa lỗi Aspect trùng: {stats['overlap_fixed']}")
+    print(f" - Số ca sửa lỗi Mixed: {stats['mixed_fixed']}")
+
+
 def RunLLM():
     response = client.models.generate_content(
         model=MODEL,

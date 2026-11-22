@@ -6,13 +6,24 @@ nhom: 3
 lop: UET.DSE2049 4
 
 qa:
-  price_max_clp: 5000000          # ngưỡng ngoại lai giá
+  price_max_eur: 5000000          # ngưỡng ngoại lai giá
   min_nights_cap: 365
   dedupe_keys: [id, last_scraped]
 
 kpi:
-  area_col: neighbourhood_cleansed
+  
+  pro_host_threashold : 3
+  tier_bins : [0, 1, 3, 10, 50, np.inf]
+  tier_labels : ["1", "2–3", "4–10", "11–50", "50+"]
+  tier_names :  ["Cá nhân", "Nhỏ lẻ", "Chuyên nghiệp", "Công ty QL", "Quy mô lớn"]
+  tier_colors : ["#2A9D8F", "#8AB17D", "#E9C46A", "#F4A261", "#E76F51"]
+  winsor_q : 0.99
 
+  engagement_hot_quantile : 0.9
+
+  amenities_hot_quantile : 0.75
+  top_n : 5
+  area_col: neighbourhood_cleansed
 llm:
   provider: gemini                # model tuỳ chọn
   sample_size: 3000               # nhóm giải thích cỡ mẫu

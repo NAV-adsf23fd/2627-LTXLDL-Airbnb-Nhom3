@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -633,12 +635,62 @@ def _tuan_do_thi(time):
     plt.close(fig)
 
 
+def _van_do_thi(time):
+    f_van = Path(f"data/processed/kpi/van_satisfaction/{time}_kpi_van_satisfaction.csv")
+    if not f_van.exists():
+        print(f"[{time}] Thiếu file KPI của Van, bỏ qua vẽ biểu đồ.")
+        return
+
+    df = pd.read_csv(f_van)
+    out_dir = Path("figures/van_satisfaction")
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18, 5.5))
+    fig.suptitle(
+        f"KPI Mức độ hài lòng & Tỷ lệ phàn nàn ({time})", fontsize=15, fontweight="bold"
+    )
+
+    # 1. Số lượng căn hộ theo nhóm sao (thang Log, đặt bottom=1 để cột ~10 không bị bẹp)
+    bars1 = ax1.bar(df["score_group"], df["Số căn hộ"], color="#4C72B0", width=0.55)
+    ax1.set_yscale("log")
+    ax1.set_ylim(bottom=1, top=max(df["Số căn hộ"].max() * 3, 10))
+    ax1.bar_label(bars1, fmt="{:,.0f}", padding=3, fontweight="bold")
+    ax1.set(title="Số lượng căn hộ theo nhóm sao (Log)", ylabel="Số căn hộ (Log)")
+
+    # 2. Tỷ lệ phàn nàn (%) từ LLM (dùng max(..., 1.0) để tránh lỗi trục âm khi tất cả = 0%)
+    bars2 = ax2.bar(
+        df["score_group"], df["Tỷ lệ Phàn nàn (%)"], color="#DD8452", width=0.55
+    )
+    max_bad = df["Tỷ lệ Phàn nàn (%)"].max()
+    ax2.set_ylim(bottom=0, top=max(max_bad * 1.2, 1.0))
+    ax2.bar_label(bars2, fmt="{:.2f}%", padding=3, fontweight="bold")
+    ax2.set(title="Tỷ lệ bình luận tiêu cực (LLM)", ylabel="Tỷ lệ Phàn nàn (%)")
+
+    # 3. Độ dài bình luận trung bình theo nhóm sao
+    bars3 = ax3.bar(
+        df["score_group"], df["Độ dài BL TB (ký tự)"], color="#55A868", width=0.55
+    )
+    max_len = df["Độ dài BL TB (ký tự)"].max()
+    ax3.set_ylim(bottom=0, top=max(max_len * 1.18, 10))
+    ax3.bar_label(bars3, fmt="{:,.0f}", padding=3, fontweight="bold")
+    ax3.set(title="Độ dài bình luận trung bình", ylabel="Số ký tự")
+
+    plt.tight_layout()
+    plt.savefig(
+        out_path := out_dir / f"{time}_kpi_van_satisfaction.png",
+        dpi=300,
+        bbox_inches="tight",
+    )
+    plt.close(fig)
+
+
 def RunViz():
     amenities = thanh()
     for i in CONFIG.snapshots:
         time = i.strftime("%Y-%m-%d")
         _tuan_do_thi(time)
         Tan(time)
+        _van_do_thi(time)
         plt.close("all")
 
     plot_amenities_kpi(amenities["area_scores"], amenities["top_amenities"])

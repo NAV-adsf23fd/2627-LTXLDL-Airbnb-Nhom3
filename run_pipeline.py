@@ -8,15 +8,14 @@ import src.filtering as fi
 from src import llm, qa, test
 from src.baseline import RunBaseline
 from src.evaluate import RunEvaluate
+from src.kpi import RunKpi
 from src.utility import *
+from src.viz import RunViz
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-c", "--config", help="Add config", type=str)
 parser.add_argument("-d", "--download", help="Download Data", action="store_true")
 parser.add_argument("-l", "--llm", help="Run LLM", action="store_true")
-parser.add_argument(
-    "-v", "--verbose", help="Increase output verbosity", action="store_true"
-)
 parser.add_argument("-f", "--filter", help="Filtering team", action="store_true")
 parser.add_argument("-q", "--qa", help="Run qa", action="store_true")
 parser.add_argument(
@@ -25,11 +24,11 @@ parser.add_argument(
 parser.add_argument("-t", "--test", action="store_true")
 parser.add_argument("-b", "--baseline", action="store_true")
 parser.add_argument("-e", "--evaluate", action="store_true")
+parser.add_argument("-v", "--viz", action="store_true")
+parser.add_argument("-k", "--kpi", action="store_true")
 
 
 def Init():
-    # for base in BASES:
-    #     os.makedirs(base, exist_ok=True)
     LoadConfig()
     Phancong.Create("pc", "csv")
     Team.Create("team", "csv")
@@ -39,7 +38,7 @@ def Init():
 
     Llm.Create("reviews", "llm", "csv")
     Llm.Create("response", "llm", "json")
-    Llm.Create("test_response", "llm", "json")
+    Llm.Create("clean_response", "llm", "json")
     Llm.Create("comments", "baseline", "json")
 
 
@@ -84,9 +83,16 @@ if args.qa:
         qa.QAListings(time)
         qa.QACalendar(time)
         qa.QAReviews(time)
+    llm.CleanLLM()
 
 if args.baseline:
     RunBaseline()
 
 if args.evaluate:
     RunEvaluate()
+
+if args.kpi:
+    RunKpi()
+
+if args.viz:
+    RunViz()

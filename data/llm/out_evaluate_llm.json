@@ -1,7 +1,7 @@
 {
   "n": 100,
   "missing": [],
-  "sentiment_acc": 0.9,
+  "sentiment_accuracy": 0.9,
   "confusion": {
     "positive->positive": 87,
     "mixed->positive": 3,
@@ -10,7 +10,6 @@
     "negative->mixed": 1,
     "mixed->mixed": 2
   },
-  "language_acc": 1.0,
   "aspects_positive": {
     "precision": 0.8492462311557789,
     "recall": 0.7130801687763713,

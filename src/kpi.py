@@ -2,11 +2,9 @@ import json
 import os
 from pathlib import Path
 
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 
-from src.utility import CONFIG, LoadConfig, Processed, Llm
+from src.utility import CONFIG, Llm, LoadConfig, Processed
 
 LoadConfig()
 # Tạo sẵn đường dẫn
@@ -214,10 +212,14 @@ def Tan(time):
 # ============================================================
 def Tuan(time):
     ENGAGEMENT_HOT_QUANTILE = CONFIG.kpi.get("engagement_hot_quantile", 0.9)
-    ENGAGEMENT_CURRENCY = CONFIG.currency
-
     df = pd.read_csv(Processed.listings[time])
-    df = df[~df["flag_any"]].copy()
+    if "flag_any" in df.columns:
+        df = df[~df["flag_any"].fillna(False)].copy()
+
+    if df.empty:
+        print(f"[{time}] Cảnh báo: Không có dữ liệu hợp lệ cho Tuan(time).")
+        return
+
     df["number_of_reviews_ltm"] = df["number_of_reviews_ltm"].fillna(0)
     df["reviews_per_month"] = df["reviews_per_month"].fillna(0)
     df["is_active"] = df["number_of_reviews_ltm"] > 0
@@ -447,10 +449,7 @@ def thanh():
     top_amenities.to_csv(
         KPI_DIR / "kpi_amenities_top.csv", index=False, encoding="utf-8-sig"
     )
-    return {
-        "area_scores": area_scores,
-        "top_amenities": top_amenities
-    }
+    return {"area_scores": area_scores, "top_amenities": top_amenities}
 
 
 # ============================================================
@@ -575,3 +574,18 @@ def Van(time):
     # ── 6. Xuất file ───────────────────────────────────────────────────
     out_file = KPI_DIR / "van_satisfaction" / f"{time}_kpi_van_satisfaction.csv"
     kpi_df.to_csv(out_file, index=False, encoding="utf-8-sig")
+
+
+def RunKpi():
+    snapshots = [s.strftime("%Y-%m-%d") for s in sorted(CONFIG.snapshots)]
+    if not snapshots:
+        return
+
+    Thai(snapshots[0])
+    thanh()
+
+    for time in snapshots:
+        Tan(time)
+        Tuan(time)
+        Van(time)
+    print("Đã tính xong toàn bộ KPI.")

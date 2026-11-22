@@ -484,7 +484,7 @@ def Van(time):
     reviews["review_id"] = reviews["id"].astype(str)
 
     # ── 3. Đọc kết quả LLM (Tính tỷ lệ tiêu cực) ───────────────────────
-    llm_path = Llm.files["response"]  # Trỏ tới data/llm/llm-response.json
+    llm_path = "data/llm/llm-clean_response.json"  # Trỏ tới data/llm/llm-response.json
 
     if os.path.exists(llm_path):
         with open(llm_path, "r", encoding="utf-8") as f:

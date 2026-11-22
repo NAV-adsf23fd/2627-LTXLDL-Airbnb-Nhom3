@@ -603,3 +603,5 @@ def QAReport():
     pd.DataFrame(rows).to_csv(out_path, index=False, encoding="utf-8-sig")
     print(f"[QAReport] Đã ghi {len(rows)} quy tắc → {out_path}")
     return out_path
+if __name__ == "__main__":
+    QAReport()

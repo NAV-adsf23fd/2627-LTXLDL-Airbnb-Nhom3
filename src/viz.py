@@ -574,6 +574,9 @@ def plot_amenities_kpi(area_scores, top_amenities):
 
 
 def _tuan_do_thi(time):
+    if not os.path.exists("data/processed/kpi" + "/engagement/" + time + "_kpi_engagement.csv"):
+        print(f"[{time}] Bỏ qua đồ thị: Không tìm thấy file {"data/processed/kpi" + "/engagement/" + time + "_kpi_engagement.csv"}")
+        return
     os.makedirs("figures/engagement", exist_ok=True)
     os.makedirs("figures/engagement/" + time, exist_ok=True)
     min_listings = 30

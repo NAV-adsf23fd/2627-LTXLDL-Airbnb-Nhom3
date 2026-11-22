@@ -8,8 +8,6 @@ from src.utility import CONFIG, Llm, LoadConfig, Processed
 
 LoadConfig()
 # Tạo sẵn đường dẫn
-FIG_DIR = Path("reports/figures")
-FIG_DIR.mkdir(parents=True, exist_ok=True)
 KPI_DIR = Path("data/processed/kpi")
 KPI_DIR.mkdir(parents=True, exist_ok=True)
 

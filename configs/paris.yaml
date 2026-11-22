@@ -13,7 +13,7 @@ qa:
 kpi:
   
   pro_host_threashold : 3
-  tier_bins : [0, 1, 3, 10, 50, np.inf]
+  tier_bins : [0, 1, 3, 10, 50, 999999999]
   tier_labels : ["1", "2–3", "4–10", "11–50", "50+"]
   tier_names :  ["Cá nhân", "Nhỏ lẻ", "Chuyên nghiệp", "Công ty QL", "Quy mô lớn"]
   tier_colors : ["#2A9D8F", "#8AB17D", "#E9C46A", "#F4A261", "#E76F51"]

@@ -6,8 +6,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from src.utility import CONFIG, Processed
+from src.utility import CONFIG, LoadConfig, Processed, Llm
 
+LoadConfig()
 # Tạo sẵn đường dẫn
 FIG_DIR = Path("reports/figures")
 FIG_DIR.mkdir(parents=True, exist_ok=True)
@@ -74,32 +75,64 @@ def Tan(time):
 
     PRO_HOST_THRESHOLD = CONFIG.kpi.get("pro_host_threashold", 3)
     CURRENCY = CONFIG.currency
+
     TIER_BINS = CONFIG.kpi.get("tier_bins", [0, 1, 3, 100])
     TIER_LABELS = CONFIG.kpi.get("tier_labels", [0, 1, 2])
+
+    # Xử lý lỗi config (nếu có)
+    is_valid_bins = (
+        isinstance(TIER_BINS, list)
+        and len(TIER_BINS) >= 2
+        and all(TIER_BINS[i] < TIER_BINS[i + 1] for i in range(len(TIER_BINS) - 1))
+    )
+    if not is_valid_bins:
+        TIER_BINS = [0, 1, 3, 100]
+        TIER_LABELS = [0, 1, 2]
+
     TIER_NAMES = CONFIG.kpi.get("tier_names", ["Siêu nhỏ", "Nhỏ", "Lớn"])
     WINSOR_Q = CONFIG.kpi.get("winsor_q", 0.99)
 
     K = "calculated_host_listings_count"
     cols = ["id", K, "estimated_revenue_l365d", "estimated_occupancy_l365d"]
+
     df = pd.read_csv(CSV_PATH, usecols=cols).dropna(subset=[K]).copy()
+
+    # --- SỬA LỖI TẠI ĐÂY: Điền 0 cho các giá trị NaN ---
+    df["estimated_revenue_l365d"] = df["estimated_revenue_l365d"].fillna(0)
+    df["estimated_occupancy_l365d"] = df["estimated_occupancy_l365d"].fillna(0)
 
     df["is_pro"] = df[K] > PRO_HOST_THRESHOLD
     df["tier"] = pd.cut(df[K], TIER_BINS, labels=TIER_LABELS)
     df["host_w"] = 1 / df[K]
 
     rev_cap = df["estimated_revenue_l365d"].quantile(WINSOR_Q)
+    # --- SỬA LỖI TẠI ĐÂY: Nếu rev_cap là NaN thì gán bằng 0 ---
+    if pd.isna(rev_cap):
+        rev_cap = 0
+
     df["rev_w"] = df["estimated_revenue_l365d"].clip(upper=rev_cap)
 
     n = len(df)
     pro = df[df.is_pro]
 
     share_listing = df.is_pro.mean() * 100
-    share_host = pro.host_w.sum() / df.host_w.sum() * 100
-    share_rev = pro.rev_w.sum() / df.rev_w.sum() * 100
+
+    # --- SỬA LỖI TẠI ĐÂY: Kiểm tra mẫu số trước khi chia ---
+    total_host_w = df.host_w.sum()
+    share_host = (pro.host_w.sum() / total_host_w * 100) if total_host_w > 0 else 0.0
+
+    total_rev = df.rev_w.sum()
+    share_rev = (pro.rev_w.sum() / total_rev * 100) if total_rev > 0 else 0.0
+
+    total_nights = df.estimated_occupancy_l365d.sum()
     share_nights = (
-        pro.estimated_occupancy_l365d.sum() / df.estimated_occupancy_l365d.sum() * 100
+        (pro.estimated_occupancy_l365d.sum() / total_nights * 100)
+        if total_nights > 0
+        else 0.0
     )
-    avg_pro_portfolio = len(pro) / pro.host_w.sum()
+
+    total_pro_w = pro.host_w.sum()
+    avg_pro_portfolio = (len(pro) / total_pro_w) if total_pro_w > 0 else 0.0
 
     kpi = pd.DataFrame(
         [
@@ -139,23 +172,25 @@ def Tan(time):
         revenue=("rev_w", "sum"),
     )
 
+    # Xử lý để tránh lỗi chia 0 khi tính tỷ trọng dưới bảng
+    total_listings = g.listings.sum() if g.listings.sum() > 0 else 1
+    total_hostw_sum = g.host_w.sum() if g.host_w.sum() > 0 else 1
+    total_nights_sum = g.nights.sum() if g.nights.sum() > 0 else 1
+    total_rev_sum = g.revenue.sum() if g.revenue.sum() > 0 else 1
+
     tier = pd.DataFrame(
         {
             "Nhóm (listing / chủ nhà)": TIER_LABELS,
             "Tên nhóm": TIER_NAMES,
             "Số listing (listing)": g.listings.values,
-            "Tỷ trọng listing (%)": (g.listings / g.listings.sum() * 100)
-            .round(1)
-            .values,
-            "Tỷ trọng chủ nhà – ước tính (%)": (g.host_w / g.host_w.sum() * 100)
+            "Tỷ trọng listing (%)": (g.listings / total_listings * 100).round(1).values,
+            "Tỷ trọng chủ nhà – ước tính (%)": (g.host_w / total_hostw_sum * 100)
             .round(2)
             .values,
             "Số đêm có khách (đêm / năm)": g.nights.round(0).astype(int).values,
-            "Tỷ trọng số đêm (%)": (g.nights / g.nights.sum() * 100).round(1).values,
+            "Tỷ trọng số đêm (%)": (g.nights / total_nights_sum * 100).round(1).values,
             f"Doanh thu* ({CURRENCY} / năm)": g.revenue.round(0).astype(int).values,
-            "Tỷ trọng doanh thu (%)": (g.revenue / g.revenue.sum() * 100)
-            .round(1)
-            .values,
+            "Tỷ trọng doanh thu (%)": (g.revenue / total_rev_sum * 100).round(1).values,
         }
     )
 

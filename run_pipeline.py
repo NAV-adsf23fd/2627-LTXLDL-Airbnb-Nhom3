@@ -63,7 +63,7 @@ if args.config != None:
     LoadConfig(args.config)
 
 if args.download:
-    dl.Download(args.verbose)
+    dl.Download()
 
 if args.filter:
     dl.FilterSamples()
@@ -84,6 +84,7 @@ if args.qa:
         qa.QACalendar(time)
         qa.QAReviews(time)
     llm.CleanLLM()
+    qa.QAReport()
 
 if args.baseline:
     RunBaseline()
